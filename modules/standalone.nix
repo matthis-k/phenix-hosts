@@ -2,18 +2,18 @@
   inherit (inputs) nixpkgs disko;
 in {
   flake.nixosConfigurations = {
-    matthisk-laptop-phenix = nixpkgs.lib.nixosSystem {
+    matthisk-laptop = nixpkgs.lib.nixosSystem {
       modules = [
         disko.nixosModules.disko
-        ./hosts/matthisk-laptop-phenix/configuration.nix
+        ./hosts/matthisk-laptop/configuration.nix
         { nixpkgs.hostPlatform = "x86_64-linux"; }
       ];
     };
 
-    matthisk-desktop-phenix = nixpkgs.lib.nixosSystem {
+    matthisk-desktop = nixpkgs.lib.nixosSystem {
       modules = [
         disko.nixosModules.disko
-        ./hosts/matthisk-desktop-phenix/configuration.nix
+        ./hosts/matthisk-desktop/configuration.nix
         { nixpkgs.hostPlatform = "x86_64-linux"; }
       ];
     };
