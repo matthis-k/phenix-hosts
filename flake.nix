@@ -5,6 +5,10 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     phenix-pins.url = "github:matthis-k/phenix-pins";
     nixpkgs.follows = "phenix-pins/nixpkgs";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ flake-parts, ... }:
