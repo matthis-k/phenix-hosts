@@ -1,35 +1,18 @@
-{ inputs, ... }: let
-  inherit (inputs) nixpkgs disko;
-in {
-  flake.nixosConfigurations = {
-    matthisk-laptop = nixpkgs.lib.nixosSystem {
-      modules = [
-        disko.nixosModules.disko
-        ./hosts/matthisk-laptop/configuration.nix
-        { nixpkgs.hostPlatform = "x86_64-linux"; }
-      ];
-    };
-
-    matthisk-desktop = nixpkgs.lib.nixosSystem {
-      modules = [
-        disko.nixosModules.disko
-        ./hosts/matthisk-desktop/configuration.nix
-        { nixpkgs.hostPlatform = "x86_64-linux"; }
-      ];
-    };
-
-    phenix-live-usb = nixpkgs.lib.nixosSystem {
-      modules = [
-        ./hosts/phenix-live-usb/configuration.nix
-        { nixpkgs.hostPlatform = "x86_64-linux"; }
-      ];
-    };
-  };
+_: {
+  # Host configuration files are not present in this repository checkout yet.
+  # Keep nixosConfigurations empty until real hosts/<name>/configuration.nix
+  # files exist and have been verified before enabling imports here.
+  flake.nixosConfigurations = { };
 
   perSystem = { pkgs, ... }: {
     devShells.default = pkgs.mkShell {
       name = "phenix-hosts-dev";
-      packages = with pkgs; [ nix nixfmt statix deadnix ];
+      packages = with pkgs; [
+        nix
+        nixfmt
+        statix
+        deadnix
+      ];
       shellHook = ''
         repo-hook() {
           if command -v tend &>/dev/null; then
