@@ -5,6 +5,8 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     phenix-pins.url = "github:matthis-k/phenix-pins";
     nixpkgs.follows = "phenix-pins/nixpkgs";
+    home-manager.follows = "phenix-pins/home-manager";
+    sops-nix.follows = "phenix-pins/sops-nix";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";

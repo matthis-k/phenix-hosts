@@ -1,3 +1,1 @@
-_: {
-  flake = { };
-}
+import ./package.nix
