@@ -28,7 +28,7 @@ in
     inherit nixosModules homeModules;
   };
 
-  perSystem = { pkgs, ... }: {
+  perSystem = { pkgs, system, ... }: {
     packages.phenix-migration-info = pkgs.writeShellApplication {
       name = "phenix-migration-info";
       text = ''
@@ -72,6 +72,7 @@ in
         nixfmt
         statix
         deadnix
+        inputs.phenix-tend.packages.${system}.tend
       ];
       shellHook = ''
         repo-hook() {
