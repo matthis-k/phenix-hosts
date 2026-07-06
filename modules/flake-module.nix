@@ -12,16 +12,11 @@ let
     audioPipewire = import ./nixos/audio-pipewire.nix;
     sudoWheelPasswordless = import ./nixos/sudo-wheel-passwordless.nix;
   };
-
-  homeModules = {
-    usersMatthiskBase = import ./home/users-matthisk-base.nix;
-    usersMatthiskSsh = import ./home/users-matthisk-ssh.nix;
-  };
 in
 {
   flake = {
     nixosConfigurations = inputs.phenix-hosts.nixosConfigurations;
 
-    inherit nixosModules homeModules;
+    inherit nixosModules;
   };
 }
