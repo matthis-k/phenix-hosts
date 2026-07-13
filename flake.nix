@@ -14,10 +14,6 @@
     };
     home-manager.follows = "phenix-pins/home-manager";
     sops-nix.follows = "phenix-pins/sops-nix";
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
