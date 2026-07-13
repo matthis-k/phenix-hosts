@@ -2,26 +2,24 @@
 let
   nixosModules = {
     default = import ./nixos/default.nix { inherit inputs; };
-    phenixMigrationBase = import ./nixos/phenix-migration-base.nix;
-    homeManagerBridge = import ./nixos/home-manager-bridge.nix { inherit inputs; };
-    sopsBridge = import ./nixos/sops-bridge.nix;
-    sopsBase = import ./nixos/sops-base.nix { inherit inputs; };
-    nixBase = import ./nixos/nix-base.nix;
-    usersMatthisk = import ./nixos/users-matthisk.nix;
-    localeDeEn = import ./nixos/locale-de-en.nix;
-    audioPipewire = import ./nixos/audio-pipewire.nix;
-    sudoWheelPasswordless = import ./nixos/sudo-wheel-passwordless.nix;
+    homeManager = import ./nixos/home-manager.nix { inherit inputs; };
+    sops = import ./nixos/sops.nix { inherit inputs; };
+    nix = import ./nixos/nix-base.nix;
+    userMatthisk = import ./nixos/users-matthisk.nix;
+    locale = import ./nixos/locale-de-en.nix;
+    audio = import ./nixos/audio-pipewire.nix;
+    sudo = import ./nixos/sudo-wheel-passwordless.nix;
   };
 
   homeModules = {
-    usersMatthiskBase = import ./home/users-matthisk-base.nix;
-    usersMatthiskSsh = import ./home/users-matthisk-ssh.nix;
+    matthisk = import ./home/users-matthisk-base.nix;
+    matthiskSsh = import ./home/users-matthisk-ssh.nix;
   };
 in
 {
   flake = {
-    # Concrete host configurations remain intentionally disabled until the
-    # migrated hosts are complete and independently evaluable.
+    # Concrete machines remain disabled until their hardware and secret inputs
+    # are migrated and independently evaluable.
     nixosConfigurations = { };
 
     inherit nixosModules homeModules;
