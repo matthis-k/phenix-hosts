@@ -20,6 +20,8 @@ jobs:
       - uses: cachix/install-nix-action@a49548c11d9846ad46ecc0115273879b045f001c # v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Refresh flake inputs
+        run: nix flake update --accept-flake-config
       - name: Run Tend validation
         id: validate
         continue-on-error: true
@@ -32,13 +34,13 @@ jobs:
             --base "$base_sha" \
             --head "$head_sha" \
             > validation.log 2>&1
-      - name: Commit validation output
+      - name: Commit generated state
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add validation.log
+          git add flake.lock validation.log
           if ! git diff --cached --quiet; then
-            git commit -m "chore: capture Tend validation"
+            git commit -m "chore: refresh inputs and capture Tend validation"
             git push
           fi
       - name: Enforce validation result
