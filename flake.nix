@@ -29,7 +29,6 @@
       ];
       imports = [
         ./modules/outputs.nix
-        ./modules/package.nix
         ./modules/development.nix
       ];
       flake.flakeModules.default = import ./modules/flake-module.nix;
