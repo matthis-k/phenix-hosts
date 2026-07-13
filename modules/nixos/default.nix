@@ -1,8 +1,12 @@
 { inputs }:
 {
   imports = [
-    ./phenix-migration-base.nix
-    (import ./home-manager-bridge.nix { inherit inputs; })
-    ./sops-bridge.nix
+    (import ./home-manager.nix { inherit inputs; })
+    (import ./sops.nix { inherit inputs; })
+    ./nix-base.nix
+    ./users-matthisk.nix
+    ./locale-de-en.nix
+    ./audio-pipewire.nix
+    ./sudo-wheel-passwordless.nix
   ];
 }
