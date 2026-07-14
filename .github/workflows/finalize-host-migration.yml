@@ -38,3 +38,4 @@ jobs:
             git commit -m "chore: finalize migrated host configuration"
             git push
           fi
+      # This workflow is temporary and is removed after the migration gate passes.
