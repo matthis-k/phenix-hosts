@@ -1,4 +1,7 @@
 { inputs }:
+let
+  boolToEnabled = value: if value then "enabled" else "disabled";
+in
 {
   config,
   lib,
