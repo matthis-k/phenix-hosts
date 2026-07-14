@@ -23,6 +23,12 @@ let
       matthiskHostModule
     ];
   };
+  standaloneHomeModule = module: {
+    imports = [
+      homeContextModule
+      module
+    ];
+  };
 in
 {
   flake = {
@@ -50,9 +56,11 @@ in
       default = matthiskHomeModule;
       context = homeContextModule;
       matthisk = matthiskHomeModule;
-      matthiskBase = import ./home/users-matthisk-base.nix;
-      matthiskSsh = import ./home/users-matthisk-ssh.nix { inherit inventory; };
-      git = import ./home/git.nix;
+      matthiskBase = standaloneHomeModule (import ./home/users-matthisk-base.nix);
+      matthiskSsh = standaloneHomeModule (
+        import ./home/users-matthisk-ssh.nix { inherit inventory; }
+      );
+      git = standaloneHomeModule (import ./home/git.nix);
     };
 
     flakeModules.default = import ./flake-module.nix;
