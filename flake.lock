@@ -892,11 +892,11 @@
         "zen-flake": "zen-flake"
       },
       "locked": {
-        "lastModified": 1784001427,
-        "narHash": "sha256-B+Bt8tFbUhXrY0TKc/F21PGuiYYe9uz44wQkVvdB8wM=",
+        "lastModified": 1784003376,
+        "narHash": "sha256-ViKnGWHfeKrppWfQf9C+jbtG7p5Dg9zWS20CsGNZgPI=",
         "owner": "matthis-k",
         "repo": "phenix-de",
-        "rev": "ea00a9eca632382bcb4ca81d1bf49c9bfe75caa5",
+        "rev": "454f0cdecd3fa0aedbc6134cf29863c19469c2e6",
         "type": "github"
       },
       "original": {
