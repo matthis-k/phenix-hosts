@@ -12,11 +12,14 @@ let
     "Dedicated_IP"
   ];
   connectArgs = lib.escapeShellArgs ([ "connect" ] ++ groupArgs);
-  autoConnectArgs = lib.escapeShellArgs ([
-    "set"
-    "autoconnect"
-    "true"
-  ] ++ groupArgs);
+  autoConnectArgs = lib.escapeShellArgs (
+    [
+      "set"
+      "autoconnect"
+      "true"
+    ]
+    ++ groupArgs
+  );
 in
 {
   options.newxos.nordvpn = {
@@ -49,11 +52,13 @@ in
       after = [
         "network-online.target"
         "nordvpnd.service"
-      ] ++ lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
+      ]
+      ++ lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
       wants = [
         "network-online.target"
         "nordvpnd.service"
-      ] ++ lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
+      ]
+      ++ lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
       wantedBy = [ "multi-user.target" ];
 
       restartTriggers = [
