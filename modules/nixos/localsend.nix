@@ -1,4 +1,3 @@
-{ inputs }:
 { config, pkgs, ... }:
 let
   port = 53317;
@@ -31,23 +30,10 @@ let
   };
 in
 {
-  imports = [ (import ./services/nordvpn.nix { inherit inputs; }) ];
-
   environment.systemPackages = [ localsend ];
 
   networking.firewall = {
     allowedTCPPorts = [ port ];
     allowedUDPPorts = [ port ];
   };
-
-  services.nordvpn.settings.allowlist.ports = [
-    {
-      inherit port;
-      protocol = "TCP";
-    }
-    {
-      inherit port;
-      protocol = "UDP";
-    }
-  ];
 }
