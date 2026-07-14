@@ -7,7 +7,8 @@
 }:
 let
   primaryUser = inventory.users.${inventory.primaryUser};
-  fromHost = fallback: selector: if osConfig == null then fallback else selector osConfig.phenix;
+  fromHost = path: fallback:
+    if osConfig == null then fallback else lib.attrByPath ([ "phenix" ] ++ path) fallback osConfig;
   readOnlyString = default: description: lib.mkOption {
     inherit default description;
     type = lib.types.str;
@@ -24,49 +25,47 @@ in
 
     user = {
       name = readOnlyString
-        (fromHost primaryUser.name (phenix: phenix.user.name))
+        (fromHost [ "user" "name" ] primaryUser.name)
         "Primary interactive user managed by Phenix.";
       homeDirectory = readOnlyString
-        (fromHost primaryUser.homeDirectory (phenix: phenix.user.homeDirectory))
+        (fromHost [ "user" "homeDirectory" ] primaryUser.homeDirectory)
         "Home directory of the primary Phenix user.";
 
       git = {
         name = readOnlyString
-          (fromHost primaryUser.git.name (phenix: phenix.user.git.name))
+          (fromHost [ "user" "git" "name" ] primaryUser.git.name)
           "Git author name of the primary Phenix user.";
         email = readOnlyString
-          (fromHost primaryUser.git.email (phenix: phenix.user.git.email))
+          (fromHost [ "user" "git" "email" ] primaryUser.git.email)
           "Git author email of the primary Phenix user.";
       };
     };
 
     paths = {
       root = readOnlyString
-        (fromHost primaryUser.workspace.root (phenix: phenix.paths.root))
+        (fromHost [ "paths" "root" ] primaryUser.workspace.root)
         "Root directory of the local Phenix workspace.";
       repositories = readOnlyString
-        (fromHost primaryUser.workspace.repositories (phenix: phenix.paths.repositories))
+        (fromHost [ "paths" "repositories" ] primaryUser.workspace.repositories)
         "Directory containing the Phenix repositories.";
       flake = readOnlyString
-        (fromHost primaryUser.workspace.flake (phenix: phenix.paths.flake))
+        (fromHost [ "paths" "flake" ] primaryUser.workspace.flake)
         "Path to the root Phenix flake checkout.";
       desktop = readOnlyString
-        (fromHost primaryUser.workspace.desktop (phenix: phenix.paths.desktop))
+        (fromHost [ "paths" "desktop" ] primaryUser.workspace.desktop)
         "Path to the Phenix desktop checkout.";
       secrets = readOnlyString
-        (fromHost inventory.secretDirectory (phenix: phenix.paths.secrets))
+        (fromHost [ "paths" "secrets" ] inventory.secretDirectory)
         "Runtime directory containing decrypted Phenix secrets.";
     };
 
     versions.homeManager = readOnlyString
-      (fromHost primaryUser.stateVersion (phenix: phenix.versions.homeManager))
+      (fromHost [ "versions" "homeManager" ] primaryUser.stateVersion)
       "Home Manager state version of the primary user.";
   };
 
   config = {
-    phenix.devMode = lib.mkDefault (
-      if osConfig == null then false else osConfig.phenix.devMode or false
-    );
+    phenix.devMode = lib.mkDefault (fromHost [ "devMode" ] false);
 
     home = {
       username = config.phenix.user.name;
