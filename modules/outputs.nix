@@ -1,25 +1,16 @@
-{ inputs, ... }:
+{
+  config,
+  inputs,
+  ...
+}:
 let
   workstationModule = import ./nixos/workstation.nix { inherit inputs; };
-  laptopModule = import ./nixos/hosts/laptop.nix { inherit inputs; };
-  desktopModule = import ./nixos/hosts/desktop.nix { inherit inputs; };
+  laptopModule = config.den.hosts.x86_64-linux.matthisk-laptop-newxos.mainModule;
+  desktopModule = config.den.hosts.x86_64-linux.matthisk-desktop-newxos.mainModule;
   matthiskHomeModule = import ./home/matthisk.nix { inherit inputs; };
-
-  mkSystem =
-    module:
-    inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
-      modules = [ module ];
-    };
 in
 {
   flake = {
-    nixosConfigurations = {
-      matthisk-laptop-newxos = mkSystem laptopModule;
-      matthisk-desktop-newxos = mkSystem desktopModule;
-    };
-
     nixosModules = {
       default = workstationModule;
       workstation = workstationModule;
@@ -33,9 +24,9 @@ in
       audio = import ./nixos/audio-pipewire.nix;
       sudo = import ./nixos/sudo-wheel-passwordless.nix;
       networking = import ./nixos/networking.nix;
-      localSend = import ./nixos/localsend.nix { inherit inputs; };
+      localSend = import ./nixos/localsend.nix;
       devMode = import ./nixos/dev-mode.nix;
-      nordvpn = import ./nixos/services/nordvpn.nix { inherit inputs; };
+      nordvpn = import ./nixos/services/nordvpn.nix;
       llmServer = import ./nixos/services/llm-server.nix;
     };
 
@@ -46,5 +37,7 @@ in
       matthiskSsh = import ./home/users-matthisk-ssh.nix;
       git = import ./home/git.nix;
     };
+
+    flakeModules.default = import ./flake-module.nix;
   };
 }
