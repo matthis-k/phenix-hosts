@@ -31,7 +31,7 @@ in
       audio = import ./nixos/audio-pipewire.nix;
       sudo = import ./nixos/sudo-wheel-passwordless.nix;
       networking = import ./nixos/networking.nix;
-      localSend = import ./nixos/localsend.nix;
+      localSend = import ./nixos/localsend.nix { inherit inputs; };
       devMode = import ./nixos/dev-mode.nix;
       nordvpn = import ./nixos/services/nordvpn.nix { inherit inputs; };
       llmServer = import ./nixos/services/llm-server.nix;
