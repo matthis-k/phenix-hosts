@@ -1,0 +1,52 @@
+name: Finalize host migration
+
+on:
+  push:
+    branches:
+      - migration/newxos-host-configs
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+      - uses: cachix/install-nix-action@a49548c11d9846ad46ecc0115273879b045f001c # v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Restore extracted lexical helpers
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path('modules/nixos/services/nordvpn.nix')
+          text = path.read_text()
+          old = '{ inputs }:\n{\n'
+          new = '{ inputs }:\nlet\n  boolToEnabled = value: if value then "enabled" else "disabled";\nin\n{\n'
+          if old in text and 'boolToEnabled = value:' not in text:
+              path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Normalize and update inputs
+        run: |
+          nix develop --accept-flake-config --command bash -c '
+            mapfile -d "" files < <(find . -path ./.git -prune -o -name "*.nix" -type f -print0)
+            nixfmt "${files[@]}"
+            statix fix
+          '
+          nix flake update --accept-flake-config
+      - name: Commit finalized migration
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add flake.lock flake.nix modules
+          if ! git diff --cached --quiet; then
+            git commit -m "fix: finalize migrated host modules"
+            git push
+          fi
