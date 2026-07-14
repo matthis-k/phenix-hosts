@@ -92,113 +92,114 @@ in
   };
 
   config = lib.mkIf (cfg.enableOllama || cfg.enableOpenWebUI || cfg.enableTTS) {
-    nix.settings.substituters = [
-      "https://cache.nixos-cuda.org"
-    ];
-    nix.settings.trusted-public-keys = [
-      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
-    ];
+    nix.settings = {
+      substituters = [ "https://cache.nixos-cuda.org" ];
+      trusted-public-keys = [
+        "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+      ];
+    };
 
     hardware.nvidia-container-toolkit.enable = lib.mkIf cfg.enableTTS true;
-
     virtualisation.docker.enable = lib.mkIf cfg.enableTTS true;
 
-    services.ollama = lib.mkIf cfg.enableOllama {
-      enable = true;
-      package = pkgs.ollama-cuda;
-      host = cfg.ollamaHost;
-      loadModels = cfg.ollamaModels;
-    };
-
-    services.open-webui = lib.mkIf cfg.enableOpenWebUI {
-      enable = true;
-      host = "0.0.0.0";
-      port = cfg.webUIPort;
-      openFirewall = cfg.webUIOpenFirewall;
-      environment = {
-        ENABLE_PERSISTENT_CONFIG = "False";
-        OLLAMA_BASE_URL = ollamaUrl;
-        RAG_EMBEDDING_ENGINE = "ollama";
-        RAG_EMBEDDING_BASE_URL = ollamaUrl;
-        RAG_EMBEDDING_MODEL = "nomic-embed-text";
-        WEBUI_URL = webUIPublicUrl;
-      }
-      // lib.optionalAttrs cfg.enableTTS {
-        AUDIO_TTS_ENGINE = "openai";
-        AUDIO_TTS_OPENAI_API_BASE_URL = ttsUrl;
-        AUDIO_TTS_OPENAI_API_KEY = "not-needed";
-        AUDIO_TTS_MODEL = "kokoro";
-        AUDIO_TTS_VOICE = cfg.ttsVoice;
-        # Open WebUI owns live playback chunking; Kokoro-FastAPI then streams
-        # each OpenAI-compatible /v1/audio/speech request internally.
-        AUDIO_TTS_SPLIT_ON = cfg.ttsSplitOn;
+    services = {
+      ollama = lib.mkIf cfg.enableOllama {
+        enable = true;
+        package = pkgs.ollama-cuda;
+        host = cfg.ollamaHost;
+        loadModels = cfg.ollamaModels;
       };
-    };
 
-    services.caddy = lib.mkIf cfg.enableOpenWebUI {
-      enable = true;
-      openFirewall = true;
-      virtualHosts.${webUIHostName}.extraConfig = ''
-        tls internal
-        reverse_proxy ${webUIUrl}
-      '';
-    };
+      open-webui = lib.mkIf cfg.enableOpenWebUI {
+        enable = true;
+        host = "0.0.0.0";
+        port = cfg.webUIPort;
+        openFirewall = cfg.webUIOpenFirewall;
+        environment = {
+          ENABLE_PERSISTENT_CONFIG = "False";
+          OLLAMA_BASE_URL = ollamaUrl;
+          RAG_EMBEDDING_ENGINE = "ollama";
+          RAG_EMBEDDING_BASE_URL = ollamaUrl;
+          RAG_EMBEDDING_MODEL = "nomic-embed-text";
+          WEBUI_URL = webUIPublicUrl;
+        }
+        // lib.optionalAttrs cfg.enableTTS {
+          AUDIO_TTS_ENGINE = "openai";
+          AUDIO_TTS_OPENAI_API_BASE_URL = ttsUrl;
+          AUDIO_TTS_OPENAI_API_KEY = "not-needed";
+          AUDIO_TTS_MODEL = "kokoro";
+          AUDIO_TTS_VOICE = cfg.ttsVoice;
+          AUDIO_TTS_SPLIT_ON = cfg.ttsSplitOn;
+        };
+      };
 
-    systemd.services.caddy-local-root-cert = lib.mkIf cfg.enableOpenWebUI {
-      description = "Publish Caddy local root certificate for browsers";
-      after = [ "caddy.service" ];
-      requires = [ "caddy.service" ];
-      wantedBy = [ "multi-user.target" ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = pkgs.writeShellScript "publish-caddy-local-root-cert" ''
-          set -eu
-
-          source=/var/lib/caddy/.local/share/caddy/pki/authorities/local/root.crt
-
-          for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
-            if [ -r "$source" ]; then
-              ${pkgs.coreutils}/bin/install -m 0444 -o root -g root "$source" ${caddyLocalRootCert}
-              exit 0
-            fi
-
-            ${pkgs.coreutils}/bin/sleep 1
-          done
-
-          printf 'Caddy local root certificate was not readable at %s\n' "$source" >&2
-          exit 1
+      caddy = lib.mkIf cfg.enableOpenWebUI {
+        enable = true;
+        openFirewall = true;
+        virtualHosts.${webUIHostName}.extraConfig = ''
+          tls internal
+          reverse_proxy ${webUIUrl}
         '';
       };
     };
 
-    systemd.services.${ttsServiceName} = lib.mkIf cfg.enableTTS {
-      description = "Kokoro-FastAPI TTS Service";
-      after = [ "docker.service" ];
-      wants = [ "docker.service" ];
-      wantedBy = [ "multi-user.target" ];
+    systemd.services = {
+      caddy-local-root-cert = lib.mkIf cfg.enableOpenWebUI {
+        description = "Publish Caddy local root certificate for browsers";
+        after = [ "caddy.service" ];
+        requires = [ "caddy.service" ];
+        wantedBy = [ "multi-user.target" ];
 
-      serviceConfig = {
-        Type = "simple";
-        Restart = "always";
-        RestartSec = 10;
-        TimeoutStartSec = "5min";
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          ExecStart = pkgs.writeShellScript "publish-caddy-local-root-cert" ''
+            set -eu
 
-        ExecStart = lib.concatStringsSep " " [
-          "${pkgs.docker}/bin/docker"
-          "run"
-          "--rm"
-          "--name"
-          ttsServiceName
-          "--device"
-          "nvidia.com/gpu=all"
-          "-p"
-          "${toString cfg.ttsPort}:8880"
-          ttsImage
-        ];
+            source=/var/lib/caddy/.local/share/caddy/pki/authorities/local/root.crt
 
-        ExecStop = "${pkgs.docker}/bin/docker stop ${ttsServiceName}";
+            for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
+              if [ -r "$source" ]; then
+                ${pkgs.coreutils}/bin/install -m 0444 -o root -g root "$source" ${caddyLocalRootCert}
+                exit 0
+              fi
+
+              ${pkgs.coreutils}/bin/sleep 1
+            done
+
+            printf 'Caddy local root certificate was not readable at %s\n' "$source" >&2
+            exit 1
+          '';
+        };
+      };
+
+      ${ttsServiceName} = lib.mkIf cfg.enableTTS {
+        description = "Kokoro-FastAPI TTS Service";
+        after = [ "docker.service" ];
+        wants = [ "docker.service" ];
+        wantedBy = [ "multi-user.target" ];
+
+        serviceConfig = {
+          Type = "simple";
+          Restart = "always";
+          RestartSec = 10;
+          TimeoutStartSec = "5min";
+
+          ExecStart = lib.concatStringsSep " " [
+            "${pkgs.docker}/bin/docker"
+            "run"
+            "--rm"
+            "--name"
+            ttsServiceName
+            "--device"
+            "nvidia.com/gpu=all"
+            "-p"
+            "${toString cfg.ttsPort}:8880"
+            ttsImage
+          ];
+
+          ExecStop = "${pkgs.docker}/bin/docker stop ${ttsServiceName}";
+        };
       };
     };
 
