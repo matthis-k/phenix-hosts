@@ -1,11 +1,8 @@
-{ inputs }:
 { lib, ... }:
 let
   homeNetworkPublicKey = builtins.readFile ../../secrets/home_network_id.pub;
 in
 {
-  imports = [ (import ./sops.nix { inherit inputs; }) ];
-
   users.users.matthisk = {
     isNormalUser = true;
     initialPassword = lib.mkDefault "";

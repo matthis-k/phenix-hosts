@@ -7,7 +7,15 @@ let
   workstationModule = import ./nixos/workstation.nix { inherit inputs; };
   laptopModule = config.den.hosts.x86_64-linux.matthisk-laptop-phenix.mainModule;
   desktopModule = config.den.hosts.x86_64-linux.matthisk-desktop-phenix.mainModule;
+  matthiskHostModule = import ./nixos/users-matthisk.nix;
   matthiskHomeModule = import ./home/matthisk.nix { inherit inputs; };
+  sopsModule = import ./nixos/sops.nix { inherit inputs; };
+  standaloneMatthiskModule = {
+    imports = [
+      sopsModule
+      matthiskHostModule
+    ];
+  };
 in
 {
   flake = {
@@ -17,9 +25,9 @@ in
       laptop = laptopModule;
       desktop = desktopModule;
       homeManager = import ./nixos/home-manager.nix { inherit inputs; };
-      sops = import ./nixos/sops.nix { inherit inputs; };
+      sops = sopsModule;
       nix = import ./nixos/nix-base.nix { inherit inputs; };
-      userMatthisk = import ./nixos/users-matthisk.nix { inherit inputs; };
+      userMatthisk = standaloneMatthiskModule;
       locale = import ./nixos/locale-de-en.nix;
       audio = import ./nixos/audio-pipewire.nix;
       sudo = import ./nixos/sudo-wheel-passwordless.nix;

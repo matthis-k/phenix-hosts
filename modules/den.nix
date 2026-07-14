@@ -8,7 +8,7 @@ let
   workstationModule = import ./nixos/workstation.nix { inherit inputs; };
   laptopModule = import ./nixos/hosts/laptop.nix;
   desktopModule = import ./nixos/hosts/desktop.nix;
-  matthiskHostModule = import ./nixos/users-matthisk.nix { inherit inputs; };
+  matthiskHostModule = import ./nixos/users-matthisk.nix;
   matthiskHomeModule = import ./home/matthisk.nix { inherit inputs; };
 in
 {

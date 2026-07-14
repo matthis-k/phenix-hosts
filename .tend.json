@@ -10,25 +10,25 @@
     "manual": {
       "phase": "verify",
       "selection": "changed",
-      "tasks": ["nixfmt-check", "statix-check", "deadnix-check", "nix-flake-check"],
+      "tasks": ["nixfmt-check", "statix-check", "deadnix-check", "nix-flake-check", "nixos-toplevel-eval"],
       "contexts": ["local"]
     },
     "full": {
       "phase": "verify",
       "selection": "full",
-      "tasks": ["nixfmt-check", "statix-check", "deadnix-check", "nix-flake-check"],
+      "tasks": ["nixfmt-check", "statix-check", "deadnix-check", "nix-flake-check", "nixos-toplevel-eval"],
       "contexts": ["local"]
     },
     "pre-push": {
       "phase": "verify",
       "selection": "full",
-      "tasks": ["nixfmt-check", "statix-check", "deadnix-check", "nix-flake-check"],
+      "tasks": ["nixfmt-check", "statix-check", "deadnix-check", "nix-flake-check", "nixos-toplevel-eval"],
       "contexts": ["local"]
     },
     "ci": {
       "phase": "verify",
       "selection": "git-range",
-      "tasks": ["nixfmt-check", "statix-check", "deadnix-check", "nix-flake-check"],
+      "tasks": ["nixfmt-check", "statix-check", "deadnix-check", "nix-flake-check", "nixos-toplevel-eval"],
       "contexts": ["ci"]
     },
     "fix": {
@@ -120,6 +120,20 @@
           "local": {
             "kind": "command",
             "command": ["nix", "flake", "check", "--print-build-logs", "--keep-going", "--accept-flake-config"],
+            "network": true,
+            "sandbox_safe": false
+          }
+        }
+      },
+      {
+        "id": "nixos-toplevel-eval",
+        "description": "Force both concrete NixOS toplevel derivations",
+        "phase": "verify",
+        "always": true,
+        "implementations": {
+          "local": {
+            "kind": "command",
+            "command": ["bash", "-c", "for host in matthisk-laptop-phenix matthisk-desktop-phenix; do nix eval --raw \".#nixosConfigurations.${host}.config.system.build.toplevel.drvPath\" >/dev/null; done"],
             "network": true,
             "sandbox_safe": false
           }
