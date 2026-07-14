@@ -62,6 +62,7 @@ in
       matthisk = matthiskHomeModule;
       matthiskBase = standaloneHomeModule (import ./home/users-matthisk-base.nix);
       matthiskSsh = standaloneHomeModule (import ./home/users-matthisk-ssh.nix { inherit inventory; });
+      devTools = import ./home/dev-tools.nix;
       git = standaloneHomeModule (import ./home/git.nix);
     };
 
