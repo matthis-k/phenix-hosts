@@ -1,12 +1,14 @@
 {
   config,
   lib,
+  modulesPath,
   pkgs,
   ...
 }:
 let
   cfg = config.phenix.nordvpn;
   nordvpn = "${pkgs.nordvpn}/bin/nordvpn";
+  networkManagerWaitOnline = lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
   groupArgs = lib.optionals cfg.dedicatedIp [
     "--group"
     "Dedicated_IP"
@@ -22,6 +24,8 @@ let
   );
 in
 {
+  imports = [ (modulesPath + "/services/networking/nordvpn.nix") ];
+
   options.phenix.nordvpn = {
     enable = lib.mkEnableOption "the declarative NordVPN workstation configuration";
 
@@ -54,13 +58,12 @@ in
         "nordvpnd.service"
         "nordvpnd.socket"
       ]
-      ++ lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
+      ++ networkManagerWaitOnline;
       requires = [
         "nordvpnd.service"
         "nordvpnd.socket"
       ];
-      wants = [ "network-online.target" ]
-      ++ lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
+      wants = [ "network-online.target" ] ++ networkManagerWaitOnline;
       wantedBy = [ "multi-user.target" ];
 
       restartTriggers = [
