@@ -10,7 +10,13 @@ let
   system = pkgs.stdenv.hostPlatform.system;
   piPackage = inputs.phenix-agent-harness.packages.${system}.pi;
   enableRuntimeLuaImport =
-    osConfig != null && (osConfig.phenix.de.hyprland.enableRuntimeLuaImport or false);
+    osConfig != null
+    && lib.attrByPath [
+      "phenix"
+      "de"
+      "hyprland"
+      "enableRuntimeLuaImport"
+    ] false osConfig;
   phenixCli = pkgs.writeShellApplication {
     name = "phenix";
     runtimeInputs = [ pkgs.coreutils ];
