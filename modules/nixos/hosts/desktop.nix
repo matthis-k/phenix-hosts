@@ -8,11 +8,12 @@
   ];
 
   networking.hostName = host.hostName;
-  phenix.host.role = host.role;
 
-  phenix.de.hyprland.monitors = [ ];
-
-  phenix.nordvpn.technology = "NORDLYNX";
+  phenix = {
+    host.role = host.role;
+    de.hyprland.monitors = [ ];
+    nordvpn.technology = "NORDLYNX";
+  };
 
   services.llm-server.enableTTS = true;
 }
