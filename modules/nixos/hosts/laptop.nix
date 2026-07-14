@@ -1,7 +1,5 @@
-{ inputs }:
 {
   imports = [
-    (import ../workstation.nix { inherit inputs; })
     ../hardware/laptop.nix
     ../storage/laptop.nix
     ../boot/laptop.nix
@@ -21,18 +19,5 @@
     enableRuntimeLuaImport = true;
   };
 
-  newxos.nordvpn = {
-    enable = true;
-    technology = "OPENVPN";
-  };
-
-  sops.secrets.nordvpn_token = {
-    format = "binary";
-    mode = "0400";
-    path = "/run/secrets/nordvpn_token";
-    sopsFile = ../../../secrets/nordvpn_token;
-  };
-
-  services.displayManager.autoLogin.user = "matthisk";
-  system.stateVersion = "25.11";
+  newxos.nordvpn.technology = "OPENVPN";
 }
