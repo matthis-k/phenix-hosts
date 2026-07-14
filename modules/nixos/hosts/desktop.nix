@@ -1,3 +1,4 @@
+{ host }:
 {
   imports = [
     ../hardware/desktop.nix
@@ -6,11 +7,13 @@
     ../services/llm-server.nix
   ];
 
-  networking.hostName = "matthisk-desktop-phenix";
+  networking.hostName = host.hostName;
 
-  phenix.de.hyprland.monitors = [ ];
-
-  phenix.nordvpn.technology = "NORDLYNX";
+  phenix = {
+    host.role = host.role;
+    de.hyprland.monitors = [ ];
+    nordvpn.technology = "NORDLYNX";
+  };
 
   services.llm-server.enableTTS = true;
 }

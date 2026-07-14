@@ -1,3 +1,4 @@
+{ host }:
 {
   imports = [
     ../hardware/laptop.nix
@@ -5,19 +6,23 @@
     ../boot/laptop.nix
   ];
 
-  networking.hostName = "matthisk-laptop-phenix";
+  networking.hostName = host.hostName;
 
-  phenix.de.hyprland = {
-    monitors = [
-      {
-        output = "eDP-1";
-        mode = "1920x1080";
-        position = "0x0";
-        scale = 1;
-      }
-    ];
-    enableRuntimeLuaImport = true;
+  phenix = {
+    host.role = host.role;
+
+    de.hyprland = {
+      monitors = [
+        {
+          output = "eDP-1";
+          mode = "1920x1080";
+          position = "0x0";
+          scale = 1;
+        }
+      ];
+      enableRuntimeLuaImport = true;
+    };
+
+    nordvpn.technology = "OPENVPN";
   };
-
-  phenix.nordvpn.technology = "OPENVPN";
 }

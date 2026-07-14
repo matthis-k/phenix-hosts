@@ -1,4 +1,4 @@
-{ inputs }:
+{ inputs, inventory }:
 {
   config,
   lib,
@@ -9,18 +9,24 @@
 let
   system = pkgs.stdenv.hostPlatform.system;
   piPackage = inputs.phenix-agent-harness.packages.${system}.pi;
-  hostDevMode = if osConfig == null then false else osConfig.phenix.devMode or false;
   enableRuntimeLuaImport =
-    osConfig != null && (osConfig.phenix.de.hyprland.enableRuntimeLuaImport or false);
+    osConfig != null
+    && lib.attrByPath [
+      "phenix"
+      "de"
+      "hyprland"
+      "enableRuntimeLuaImport"
+    ] false osConfig;
   phenixCli = pkgs.writeShellApplication {
     name = "phenix";
     runtimeInputs = [ pkgs.coreutils ];
     text = ''
+      default_flake=${lib.escapeShellArg config.phenix.paths.flake}
       command="''${1:-}"
       case "$command" in
         ai)
           shift
-          workspace="''${PHENIX_FLAKE:-$HOME/phenix/repos/phenix}"
+          workspace="''${PHENIX_FLAKE:-$default_flake}"
           if [ ! -d "$workspace" ]; then
             echo "Phenix workspace not found at $workspace" >&2
             exit 1
@@ -30,12 +36,13 @@ let
           ;;
         switch)
           shift
-          flake="''${PHENIX_FLAKE:-$HOME/phenix/repos/phenix}"
+          flake="''${PHENIX_FLAKE:-$default_flake}"
           if [ ! -e "$flake/flake.nix" ]; then
             flake="github:matthis-k/phenix"
           fi
           host="''${PHENIX_HOST:-$(${pkgs.coreutils}/bin/cat /etc/hostname)}"
-          exec /run/wrappers/bin/sudo /run/current-system/sw/bin/nixos-rebuild             switch --flake "$flake#$host" "$@"
+          exec /run/wrappers/bin/sudo /run/current-system/sw/bin/nixos-rebuild \
+            switch --flake "$flake#$host" "$@"
           ;;
         reload-shell)
           shift
@@ -52,44 +59,26 @@ let
 in
 {
   imports = [
+    (import ./context.nix { inherit inventory; })
     ./users-matthisk-base.nix
-    ./users-matthisk-ssh.nix
+    (import ./users-matthisk-ssh.nix { inherit inventory; })
     ./git.nix
     inputs.phenix-de.homeModules.default
   ];
 
-  options.phenix.devMode = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Use live Phenix desktop configuration sources.";
-  };
+  config.home = {
+    packages = [
+      phenixCli
+      inputs.phenix-nvim.packages.${system}.nvim-nix
+      piPackage
+    ];
 
-  config = {
-    phenix.devMode = lib.mkDefault hostDevMode;
-
-    home = {
-      packages = [
-        phenixCli
-        inputs.phenix-nvim.packages.${system}.nvim-nix
-        piPackage
-      ];
-
-      file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
-        source = lib.mkForce (
-          pkgs.runCommand "phenix-hyprland-nix-import-symlink" { } ''
-            ln -s /run/phenix/hypr/nix-import.lua "$out"
-          ''
-        );
-      };
-
-      sessionVariables = {
-        PHENIX_ROOT = "${config.home.homeDirectory}/phenix";
-        PHENIX_FLAKE = "${config.home.homeDirectory}/phenix/repos/phenix";
-        PHENIX_DE_ROOT = "${config.home.homeDirectory}/phenix/repos/phenix-de";
-      }
-      // lib.optionalAttrs config.phenix.devMode {
-        PHENIX_DEV = "1";
-      };
+    file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
+      source = lib.mkForce (
+        pkgs.runCommand "phenix-hyprland-nix-import-symlink" { } ''
+          ln -s /run/phenix/hypr/nix-import.lua "$out"
+        ''
+      );
     };
   };
 }

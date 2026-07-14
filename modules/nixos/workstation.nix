@@ -1,9 +1,10 @@
-{ inputs }:
+{ inputs, inventory }:
 { config, ... }:
 {
   imports = [
     inputs.disko.nixosModules.disko
     inputs.phenix-de.nixosModules.default
+    (import ./context.nix { inherit inventory; })
     (import ./home-manager.nix { inherit inputs; })
     (import ./sops.nix { inherit inputs; })
     (import ./nix-base.nix { inherit inputs; })
@@ -23,13 +24,13 @@
   sops.secrets.nordvpn_token = {
     format = "binary";
     mode = "0400";
-    owner = "matthisk";
-    path = "/run/secrets/nordvpn_token";
+    owner = config.phenix.user.name;
+    path = "${config.phenix.paths.secrets}/nordvpn_token";
     sopsFile = ../../secrets/nordvpn_token;
   };
 
-  services.displayManager.autoLogin.user = "matthisk";
-  system.stateVersion = "25.11";
+  services.displayManager.autoLogin.user = config.phenix.user.name;
+  system.stateVersion = config.phenix.versions.nixos;
 
   boot.zfs.forceImportRoot = false;
 
