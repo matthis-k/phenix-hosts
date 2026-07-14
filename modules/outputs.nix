@@ -5,11 +5,13 @@ let
   desktopModule = import ./nixos/hosts/desktop.nix { inherit inputs; };
   matthiskHomeModule = import ./home/matthisk.nix { inherit inputs; };
 
-  mkSystem = module: inputs.nixpkgs.lib.nixosSystem {
-    system = "x86_64-linux";
-    specialArgs = { inherit inputs; };
-    modules = [ module ];
-  };
+  mkSystem =
+    module:
+    inputs.nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
+      modules = [ module ];
+    };
 in
 {
   flake = {
