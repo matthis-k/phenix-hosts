@@ -1,4 +1,4 @@
-name: Find renamed font
+name: Replace renamed font
 
 on:
   push:
@@ -6,15 +6,44 @@ on:
       - cleanup/den-flake-structure
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  locate:
+  replace:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           ref: cleanup/den-flake-structure
-      - name: Locate stale package reference
+          fetch-depth: 0
+      - name: Replace stale package reference
         run: |
-          grep -RIn --exclude-dir=.git --exclude=flake.lock 'noto-fonts-emoji\|noto-fonts-color-emoji' . || true
+          python3 - <<'PY'
+          from pathlib import Path
+
+          changed = []
+          for path in Path('.').rglob('*'):
+              if not path.is_file() or '.git' in path.parts or path.name == 'flake.lock' or path == Path('.github/workflows/find-renamed-font.yml'):
+                  continue
+              try:
+                  text = path.read_text()
+              except UnicodeDecodeError:
+                  continue
+              updated = text.replace('noto-fonts-emoji', 'noto-fonts-color-emoji')
+              if updated != text:
+                  path.write_text(updated)
+                  changed.append(str(path))
+
+          if not changed:
+              raise SystemExit('No noto-fonts-emoji reference found')
+
+          print('\n'.join(changed))
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "fix: use renamed Noto color emoji package"
+          git push origin HEAD:cleanup/den-flake-structure
