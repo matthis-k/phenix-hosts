@@ -1039,16 +1039,15 @@
         "zen-flake": "zen-flake"
       },
       "locked": {
-        "lastModified": 1783991274,
-        "narHash": "sha256-cF2QlHyu9zOctmhSDv4Xa7UO8yZ2a1QyPE7WxfR2z+M=",
+        "lastModified": 1783991458,
+        "narHash": "sha256-aH+H9Lf5KuBenBsiNHXZwwFt0xjNhnqrFWYpR+mLRFo=",
         "owner": "matthis-k",
         "repo": "phenix-de",
-        "rev": "67c4c72cbee3cc5fb9d3f3396d86880d69385742",
+        "rev": "4c0210ba843a169cffe40d57a78e04bf14327765",
         "type": "github"
       },
       "original": {
         "owner": "matthis-k",
-        "ref": "migration/newxos-desktop-config",
         "repo": "phenix-de",
         "type": "github"
       }
