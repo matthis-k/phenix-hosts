@@ -1,4 +1,13 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  githubIdentityPath = "${config.phenix.paths.secrets}/github_id";
+  githubTokenPath = "${config.phenix.paths.secrets}/github_token";
+in
 {
   programs = {
     git = {
@@ -6,8 +15,8 @@
       package = pkgs.gitFull;
       settings = {
         user = {
-          name = "matthis-k";
-          email = "matthis.kaelble@gmail.com";
+          name = config.phenix.user.git.name;
+          email = config.phenix.user.git.email;
         };
         pull.rebase = false;
         merge.conflictstyle = "diff3";
@@ -25,8 +34,8 @@
     lazygit.enable = true;
 
     fish.interactiveShellInit = lib.mkAfter ''
-      if test -r /run/secrets/github_token
-        set -l github_token (string trim < /run/secrets/github_token)
+      if test -r ${githubTokenPath}
+        set -l github_token (string trim < ${githubTokenPath})
 
         if test -n "$github_token"
           set -gx GH_TOKEN $github_token
@@ -40,7 +49,7 @@
       AddKeysToAgent = "yes";
       HostName = "github.com";
       IdentitiesOnly = true;
-      IdentityFile = "/run/secrets/github_id";
+      IdentityFile = githubIdentityPath;
       User = "git";
     };
   };
