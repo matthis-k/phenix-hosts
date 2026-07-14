@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.newxos.nordvpn;
+  cfg = config.phenix.nordvpn;
   nordvpnPackage = pkgs.nordvpn;
   nordvpn = "${nordvpnPackage}/bin/nordvpn";
   groupArgs = lib.optionals cfg.dedicatedIp [
@@ -23,7 +23,7 @@ let
   );
 in
 {
-  options.newxos.nordvpn = {
+  options.phenix.nordvpn = {
     enable = lib.mkEnableOption "the migrated NordVPN workstation configuration";
 
     technology = lib.mkOption {

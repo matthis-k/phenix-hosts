@@ -1,13 +1,11 @@
-{ inputs }:
 {
   imports = [
-    (import ../workstation.nix { inherit inputs; })
     ../hardware/laptop.nix
     ../storage/laptop.nix
     ../boot/laptop.nix
   ];
 
-  networking.hostName = "matthisk-laptop-newxos";
+  networking.hostName = "matthisk-laptop-phenix";
 
   phenix.de.hyprland = {
     monitors = [
@@ -21,18 +19,5 @@
     enableRuntimeLuaImport = true;
   };
 
-  newxos.nordvpn = {
-    enable = true;
-    technology = "OPENVPN";
-  };
-
-  sops.secrets.nordvpn_token = {
-    format = "binary";
-    mode = "0400";
-    path = "/run/secrets/nordvpn_token";
-    sopsFile = ../../../secrets/nordvpn_token;
-  };
-
-  services.displayManager.autoLogin.user = "matthisk";
-  system.stateVersion = "25.11";
+  phenix.nordvpn.technology = "OPENVPN";
 }

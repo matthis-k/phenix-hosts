@@ -1,20 +1,10 @@
 { inputs }:
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ lib, ... }:
 let
   homeNetworkPublicKey = builtins.readFile ../../secrets/home_network_id.pub;
-  enableRuntimeLuaImport = config.phenix.de.hyprland.enableRuntimeLuaImport or false;
 in
 {
-  imports = [
-    (import ./home-manager.nix { inherit inputs; })
-    (import ./sops.nix { inherit inputs; })
-    ./dev-mode.nix
-  ];
+  imports = [ (import ./sops.nix { inherit inputs; }) ];
 
   users.users.matthisk = {
     isNormalUser = true;
@@ -60,19 +50,6 @@ in
       owner = "matthisk";
       path = "/run/secrets/github_token";
       sopsFile = ../../secrets/github_token;
-    };
-  };
-
-  home-manager.users.matthisk = {
-    imports = [ (import ../home/matthisk.nix { inherit inputs; }) ];
-    phenix.devMode = config.phenix.devMode;
-
-    home.file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
-      source = lib.mkForce (
-        pkgs.runCommand "phenix-hyprland-nix-import-symlink" { } ''
-          ln -s /run/phenix/hypr/nix-import.lua "$out"
-        ''
-      );
     };
   };
 
