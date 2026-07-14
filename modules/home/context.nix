@@ -6,13 +6,19 @@
 }:
 let
   primaryUser = inventory.users.${inventory.primaryUser};
-  fromHost = path: fallback:
-    if osConfig == null then fallback else lib.attrByPath ([ "phenix" ] ++ path) fallback osConfig;
-  readOnlyString = default: description: lib.mkOption {
-    inherit default description;
-    type = lib.types.str;
-    readOnly = true;
-  };
+  fromHost =
+    path: fallback:
+    if osConfig == null then
+      fallback
+    else
+      lib.attrByPath ([ "phenix" ] ++ path) fallback osConfig;
+  readOnlyString =
+    default: description:
+    lib.mkOption {
+      inherit default description;
+      type = lib.types.str;
+      readOnly = true;
+    };
 in
 {
   options.phenix = {
