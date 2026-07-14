@@ -9,11 +9,15 @@ let
   desktop = inventory.hosts.desktop;
 
   contextModule = import ./nixos/context.nix { inherit inventory; };
-  workstationModule = import ./nixos/workstation.nix { inherit inputs inventory; };
+  workstationModule = import ./nixos/workstation.nix {
+    inherit inputs inventory;
+  };
   laptopModule = config.den.hosts.x86_64-linux.${laptop.hostName}.mainModule;
   desktopModule = config.den.hosts.x86_64-linux.${desktop.hostName}.mainModule;
   matthiskHostModule = import ./nixos/users-matthisk.nix;
-  matthiskHomeModule = import ./home/matthisk.nix { inherit inputs inventory; };
+  matthiskHomeModule = import ./home/matthisk.nix {
+    inherit inputs inventory;
+  };
   homeContextModule = import ./home/context.nix { inherit inventory; };
   sopsModule = import ./nixos/sops.nix { inherit inputs; };
   standaloneMatthiskModule = {
@@ -23,12 +27,14 @@ let
       matthiskHostModule
     ];
   };
-  standaloneHomeModule = module: {
-    imports = [
-      homeContextModule
-      module
-    ];
-  };
+  standaloneHomeModule =
+    module:
+    {
+      imports = [
+        homeContextModule
+        module
+      ];
+    };
 in
 {
   flake = {
