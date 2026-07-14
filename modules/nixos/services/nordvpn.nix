@@ -205,6 +205,10 @@ in
                   printf '%s\n' "$output"
                   return 0
                   ;;
+                *"doesn't exist."*)
+                  printf 'Skipping unsupported NordVPN setting %s: %s\n' "$1" "$output"
+                  return 0
+                  ;;
               esac
 
               printf '%s\n' "$output" >&2
