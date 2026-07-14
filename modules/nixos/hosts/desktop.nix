@@ -1,3 +1,4 @@
+{ host }:
 {
   imports = [
     ../hardware/desktop.nix
@@ -6,7 +7,8 @@
     ../services/llm-server.nix
   ];
 
-  networking.hostName = "matthisk-desktop-phenix";
+  networking.hostName = host.hostName;
+  phenix.host.role = host.role;
 
   phenix.de.hyprland.monitors = [ ];
 
