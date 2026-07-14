@@ -8,7 +8,7 @@
     (import ./sops.nix { inherit inputs; })
     (import ./nix-base.nix { inherit inputs; })
     (import ./users-matthisk.nix { inherit inputs; })
-    (import ./localsend.nix { inherit inputs; })
+    ./localsend.nix
     ./services/nordvpn.nix
     ./locale-de-en.nix
     ./audio-pipewire.nix
