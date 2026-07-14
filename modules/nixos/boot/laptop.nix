@@ -1,17 +1,19 @@
 {
-  boot.initrd.systemd.enable = true;
-  boot.plymouth.enable = true;
+  boot = {
+    initrd.systemd.enable = true;
+    plymouth.enable = true;
 
-  boot.loader = {
-    efi.canTouchEfiVariables = true;
-    grub = {
-      enable = true;
-      efiSupport = true;
-      device = "nodev";
-      useOSProber = true;
-      default = "saved";
+    loader = {
+      efi.canTouchEfiVariables = true;
+      grub = {
+        enable = true;
+        efiSupport = true;
+        device = "nodev";
+        useOSProber = true;
+        default = "saved";
+      };
     };
-  };
 
-  boot.resumeDevice = "/dev/system/swap";
+    resumeDevice = "/dev/system/swap";
+  };
 }
