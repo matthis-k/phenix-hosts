@@ -1,30 +1,46 @@
 # phenix-hosts
 
-This flake is currently a placeholder for NixOS host configurations and reusable
-base module surfaces.
+NixOS workstation configurations for the Phenix environment. The flake composes the
+concrete laptop and desktop through Den while keeping feature implementation in
+ordinary NixOS and Home Manager modules.
 
-The expected `hosts/<name>/configuration.nix` files are not present in this
-checkout, so `nixosConfigurations` is intentionally empty. Add and verify real
-host files before enabling imports in `modules/standalone.nix`.
+## Hosts
+
+- `nixosConfigurations.matthisk-laptop-phenix`
+- `nixosConfigurations.matthisk-desktop-phenix`
+
+Stable host and user facts live in `modules/inventory.nix`. Typed NixOS and Home
+Manager context modules expose those facts under `phenix.host`, `phenix.user`,
+`phenix.paths`, and `phenix.versions`. See [docs/architecture.md](docs/architecture.md)
+for the composition boundaries.
 
 ## Module surfaces
 
-NixOS modules:
+Primary NixOS modules:
 
-- `nixosModules.sopsBase`
-- `nixosModules.sopsBridge`
-- `nixosModules.nixBase`
-- `nixosModules.homeManagerBridge`
-- `nixosModules.usersMatthisk`
-- `nixosModules.localeDeEn`
-- `nixosModules.audioPipewire`
-- `nixosModules.sudoWheelPasswordless`
+- `nixosModules.workstation`
+- `nixosModules.context`
+- `nixosModules.laptop`
+- `nixosModules.desktop`
+- `nixosModules.userMatthisk`
+- `nixosModules.nordvpn`
+- `nixosModules.llmServer`
 
-Home Manager modules:
+Primary Home Manager modules:
 
-- `homeModules.usersMatthiskBase`
-- `homeModules.usersMatthiskSsh`
+- `homeModules.matthisk`
+- `homeModules.context`
+- `homeModules.matthiskBase`
+- `homeModules.matthiskSsh`
+- `homeModules.git`
 
-Deferred migration work includes host enablement, concrete Home Manager user
-imports, GitHub credentials, nix-ld, OpenSSH server enablement, secret payloads,
-desktop/dev bundles, hardware, and workflow migration.
+## Development
+
+Enter the development shell and use the Tend-backed helpers:
+
+```console
+nix develop
+repo-check
+repo-fix
+repo-pushgate
+```
