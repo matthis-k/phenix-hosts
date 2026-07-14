@@ -9,6 +9,7 @@
     (import ./nix-base.nix { inherit inputs; })
     (import ./users-matthisk.nix { inherit inputs; })
     (import ./localsend.nix { inherit inputs; })
+    ./services/nordvpn.nix
     ./locale-de-en.nix
     ./audio-pipewire.nix
     ./sudo-wheel-passwordless.nix
