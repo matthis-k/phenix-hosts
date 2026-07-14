@@ -25,7 +25,6 @@ let
   mkHost = role: hostName: {
     inherit hostName role;
     localHostName = "${hostName}.${localDomain}";
-    inherit primaryUser;
   };
 in
 {
