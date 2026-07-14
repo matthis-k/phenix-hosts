@@ -1,3 +1,4 @@
+{ inputs }:
 { config, pkgs, ... }:
 let
   port = 53317;
@@ -30,6 +31,8 @@ let
   };
 in
 {
+  imports = [ (import ./services/nordvpn.nix { inherit inputs; }) ];
+
   programs.localsend = {
     enable = true;
     package = localsend;
