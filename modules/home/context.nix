@@ -1,6 +1,5 @@
 { inventory }:
 {
-  config,
   lib,
   osConfig ? null,
   ...
@@ -64,22 +63,5 @@ in
       "Home Manager state version of the primary user.";
   };
 
-  config = {
-    phenix.devMode = lib.mkDefault (fromHost [ "devMode" ] false);
-
-    home = {
-      username = config.phenix.user.name;
-      homeDirectory = config.phenix.user.homeDirectory;
-      stateVersion = config.phenix.versions.homeManager;
-
-      sessionVariables = {
-        PHENIX_ROOT = config.phenix.paths.root;
-        PHENIX_FLAKE = config.phenix.paths.flake;
-        PHENIX_DE_ROOT = config.phenix.paths.desktop;
-      }
-      // lib.optionalAttrs config.phenix.devMode {
-        PHENIX_DEV = "1";
-      };
-    };
-  };
+  config.phenix.devMode = lib.mkDefault (fromHost [ "devMode" ] false);
 }
