@@ -16,19 +16,19 @@ in
     schema.user.classes = lib.mkDefault [ "homeManager" ];
 
     hosts.x86_64-linux = {
-      matthisk-laptop-newxos.users.matthisk = { };
-      matthisk-desktop-newxos.users.matthisk = { };
+      matthisk-laptop-phenix.users.matthisk = { };
+      matthisk-desktop-phenix.users.matthisk = { };
     };
 
     aspects = {
       workstation.nixos = workstationModule;
 
-      matthisk-laptop-newxos = {
+      matthisk-laptop-phenix = {
         includes = [ den.aspects.workstation ];
         nixos = laptopModule;
       };
 
-      matthisk-desktop-newxos = {
+      matthisk-desktop-phenix = {
         includes = [ den.aspects.workstation ];
         nixos = desktopModule;
       };

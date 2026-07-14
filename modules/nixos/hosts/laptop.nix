@@ -5,7 +5,7 @@
     ../boot/laptop.nix
   ];
 
-  networking.hostName = "matthisk-laptop-newxos";
+  networking.hostName = "matthisk-laptop-phenix";
 
   phenix.de.hyprland = {
     monitors = [
@@ -19,5 +19,5 @@
     enableRuntimeLuaImport = true;
   };
 
-  newxos.nordvpn.technology = "OPENVPN";
+  phenix.nordvpn.technology = "OPENVPN";
 }

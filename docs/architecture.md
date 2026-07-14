@@ -36,7 +36,5 @@ user policy to every host on which that user is declared.
 
 - Hardware and storage modules are not converted into generic aspects.
 - Service options are not hidden behind Den-specific abstractions.
-- Compatibility names such as `newxos.*` and `*-newxos` remain until hardware
-  cutover has been verified.
 - `import-tree` is not used. The flake-level module set is small and explicit imports
   currently provide a clearer dependency boundary.

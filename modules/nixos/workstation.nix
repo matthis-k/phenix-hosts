@@ -18,7 +18,7 @@
 
   phenix.sops.enable = true;
 
-  newxos.nordvpn.enable = true;
+  phenix.nordvpn.enable = true;
 
   sops.secrets.nordvpn_token = {
     format = "binary";
@@ -32,8 +32,5 @@
 
   boot.zfs.forceImportRoot = false;
 
-  environment.sessionVariables = {
-    PHENIX_HOST = config.networking.hostName;
-    NEWXOS_HOST = config.networking.hostName;
-  };
+  environment.sessionVariables.PHENIX_HOST = config.networking.hostName;
 }

@@ -10,10 +10,7 @@
     inheritParentConfig = true;
     configuration = {
       phenix.devMode = true;
-      environment.sessionVariables = {
-        PHENIX_DEV = "1";
-        NEWXOS_DEV = "1";
-      };
+      environment.sessionVariables.PHENIX_DEV = "1";
     };
   };
 }

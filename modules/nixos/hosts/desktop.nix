@@ -6,11 +6,11 @@
     ../services/llm-server.nix
   ];
 
-  networking.hostName = "matthisk-desktop-newxos";
+  networking.hostName = "matthisk-desktop-phenix";
 
   phenix.de.hyprland.monitors = [ ];
 
-  newxos.nordvpn.technology = "NORDLYNX";
+  phenix.nordvpn.technology = "NORDLYNX";
 
   services.llm-server.enableTTS = true;
 }

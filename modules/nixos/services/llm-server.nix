@@ -8,7 +8,7 @@ let
   cfg = config.services.llm-server;
   ttsServiceName = "kokoro-fastapi";
   ttsImage = "kokoro-fastapi-gpu-sm120:latest";
-  webUIHostName = "matthisk-desktop-newxos.local";
+  webUIHostName = "matthisk-desktop-phenix.local";
   caddyLocalRootCert = "/run/caddy-local-root.crt";
   webUIPublicUrl = "https://${webUIHostName}";
   ollamaUrl = "http://localhost:${toString cfg.ollamaPort}";

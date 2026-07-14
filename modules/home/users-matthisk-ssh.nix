@@ -16,15 +16,15 @@
         ControlPersist = "no";
       };
 
-      "matthisk-desktop-newxos desktop" = {
-        HostName = "matthisk-desktop-newxos.local";
+      "matthisk-desktop-phenix desktop" = {
+        HostName = "matthisk-desktop-phenix.local";
         IdentitiesOnly = true;
         IdentityFile = "/run/secrets/home_network_id";
         User = "matthisk";
       };
 
-      "matthisk-laptop-newxos laptop" = {
-        HostName = "matthisk-laptop-newxos.local";
+      "matthisk-laptop-phenix laptop" = {
+        HostName = "matthisk-laptop-phenix.local";
         IdentitiesOnly = true;
         IdentityFile = "/run/secrets/home_network_id";
         User = "matthisk";

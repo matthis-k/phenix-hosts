@@ -5,8 +5,8 @@
 }:
 let
   workstationModule = import ./nixos/workstation.nix { inherit inputs; };
-  laptopModule = config.den.hosts.x86_64-linux.matthisk-laptop-newxos.mainModule;
-  desktopModule = config.den.hosts.x86_64-linux.matthisk-desktop-newxos.mainModule;
+  laptopModule = config.den.hosts.x86_64-linux.matthisk-laptop-phenix.mainModule;
+  desktopModule = config.den.hosts.x86_64-linux.matthisk-desktop-phenix.mainModule;
   matthiskHomeModule = import ./home/matthisk.nix { inherit inputs; };
 in
 {
