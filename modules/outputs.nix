@@ -4,14 +4,21 @@
   ...
 }:
 let
-  workstationModule = import ./nixos/workstation.nix { inherit inputs; };
-  laptopModule = config.den.hosts.x86_64-linux.matthisk-laptop-phenix.mainModule;
-  desktopModule = config.den.hosts.x86_64-linux.matthisk-desktop-phenix.mainModule;
+  inventory = import ./inventory.nix;
+  laptop = inventory.hosts.laptop;
+  desktop = inventory.hosts.desktop;
+
+  contextModule = import ./nixos/context.nix { inherit inventory; };
+  workstationModule = import ./nixos/workstation.nix { inherit inputs inventory; };
+  laptopModule = config.den.hosts.x86_64-linux.${laptop.hostName}.mainModule;
+  desktopModule = config.den.hosts.x86_64-linux.${desktop.hostName}.mainModule;
   matthiskHostModule = import ./nixos/users-matthisk.nix;
-  matthiskHomeModule = import ./home/matthisk.nix { inherit inputs; };
+  matthiskHomeModule = import ./home/matthisk.nix { inherit inputs inventory; };
+  homeContextModule = import ./home/context.nix { inherit inventory; };
   sopsModule = import ./nixos/sops.nix { inherit inputs; };
   standaloneMatthiskModule = {
     imports = [
+      contextModule
       sopsModule
       matthiskHostModule
     ];
@@ -22,6 +29,7 @@ in
     nixosModules = {
       default = workstationModule;
       workstation = workstationModule;
+      context = contextModule;
       laptop = laptopModule;
       desktop = desktopModule;
       homeManager = import ./nixos/home-manager.nix { inherit inputs; };
@@ -40,9 +48,10 @@ in
 
     homeModules = {
       default = matthiskHomeModule;
+      context = homeContextModule;
       matthisk = matthiskHomeModule;
       matthiskBase = import ./home/users-matthisk-base.nix;
-      matthiskSsh = import ./home/users-matthisk-ssh.nix;
+      matthiskSsh = import ./home/users-matthisk-ssh.nix { inherit inventory; };
       git = import ./home/git.nix;
     };
 
