@@ -851,11 +851,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783976767,
-        "narHash": "sha256-jFMuPkSNjBaHIWYBtdID9hj6wFpAXBme5fc1TviHizQ=",
+        "lastModified": 1784035348,
+        "narHash": "sha256-wErbcIQ/VxxqlVeLHbcvh4zsXJhdJHT1vAcw8F8O8i8=",
         "owner": "matthis-k",
         "repo": "phenix-agent-harness",
-        "rev": "e1b425283071a08acd406fdc420e895725b29fe6",
+        "rev": "4452af7eea48658777e5b5200ab8390efe1dabc3",
         "type": "github"
       },
       "original": {
