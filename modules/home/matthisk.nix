@@ -29,27 +29,29 @@ in
   config = {
     phenix.devMode = lib.mkDefault hostDevMode;
 
-    home.packages = [
-      inputs.phenix-nvim.packages.${system}.nvim-nix
-      inputs.phenix-agent-harness.packages.${system}.pi
-    ];
+    home = {
+      packages = [
+        inputs.phenix-nvim.packages.${system}.nvim-nix
+        inputs.phenix-agent-harness.packages.${system}.pi
+      ];
 
-    home.file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
-      source = lib.mkForce (
-        pkgs.runCommand "phenix-hyprland-nix-import-symlink" { } ''
-          ln -s /run/phenix/hypr/nix-import.lua "$out"
-        ''
-      );
-    };
+      file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
+        source = lib.mkForce (
+          pkgs.runCommand "phenix-hyprland-nix-import-symlink" { } ''
+            ln -s /run/phenix/hypr/nix-import.lua "$out"
+          ''
+        );
+      };
 
-    home.sessionVariables = {
-      PHENIX_ROOT = "${config.home.homeDirectory}/phenix";
-      PHENIX_DE_ROOT = "${config.home.homeDirectory}/phenix/repos/phenix-de";
-      NEWXOS_FLAKE = "${config.home.homeDirectory}/newxos";
-    }
-    // lib.optionalAttrs config.phenix.devMode {
-      PHENIX_DEV = "1";
-      NEWXOS_DEV = "1";
+      sessionVariables = {
+        PHENIX_ROOT = "${config.home.homeDirectory}/phenix";
+        PHENIX_DE_ROOT = "${config.home.homeDirectory}/phenix/repos/phenix-de";
+        NEWXOS_FLAKE = "${config.home.homeDirectory}/newxos";
+      }
+      // lib.optionalAttrs config.phenix.devMode {
+        PHENIX_DEV = "1";
+        NEWXOS_DEV = "1";
+      };
     };
   };
 }
