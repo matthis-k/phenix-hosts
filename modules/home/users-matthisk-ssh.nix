@@ -1,3 +1,16 @@
+{ inventory }:
+{ config, lib, ... }:
+let
+  hostSettings = lib.mapAttrs' (
+    _: host:
+    lib.nameValuePair "${host.hostName} ${host.role}" {
+      HostName = host.localHostName;
+      IdentitiesOnly = true;
+      IdentityFile = "${config.phenix.paths.secrets}/home_network_id";
+      User = config.phenix.user.name;
+    }
+  ) inventory.hosts;
+in
 {
   programs.ssh = {
     enable = true;
@@ -15,20 +28,7 @@
         ControlPath = "~/.ssh/master-%r@%n:%p";
         ControlPersist = "no";
       };
-
-      "matthisk-desktop-phenix desktop" = {
-        HostName = "matthisk-desktop-phenix.local";
-        IdentitiesOnly = true;
-        IdentityFile = "/run/secrets/home_network_id";
-        User = "matthisk";
-      };
-
-      "matthisk-laptop-phenix laptop" = {
-        HostName = "matthisk-laptop-phenix.local";
-        IdentitiesOnly = true;
-        IdentityFile = "/run/secrets/home_network_id";
-        User = "matthisk";
-      };
-    };
+    }
+    // hostSettings;
   };
 }
