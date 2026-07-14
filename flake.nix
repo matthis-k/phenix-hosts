@@ -17,7 +17,7 @@
     };
 
     phenix-de = {
-      url = "github:matthis-k/phenix-de/migration/newxos-desktop-config";
+      url = "github:matthis-k/phenix-de";
       inputs = {
         phenix-pins.follows = "phenix-pins";
         phenix-tend.follows = "phenix-tend";
