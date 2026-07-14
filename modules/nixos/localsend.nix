@@ -33,10 +33,11 @@ in
 {
   imports = [ (import ./services/nordvpn.nix { inherit inputs; }) ];
 
-  programs.localsend = {
-    enable = true;
-    package = localsend;
-    openFirewall = true;
+  environment.systemPackages = [ localsend ];
+
+  networking.firewall = {
+    allowedTCPPorts = [ port ];
+    allowedUDPPorts = [ port ];
   };
 
   services.nordvpn.settings.allowlist.ports = [
