@@ -146,6 +146,8 @@ in
         nordvpn_set dns false
         allowlist_add port 5353 protocol UDP
         allowlist_add subnet 224.0.0.0/24
+        allowlist_add port 53317 protocol TCP
+        allowlist_add port 53317 protocol UDP
         ${nordvpn} ${autoConnectArgs}
 
         if ! ${nordvpn} status | grep -q 'Status: Connected'; then
