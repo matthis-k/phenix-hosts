@@ -9,38 +9,46 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = [
-    "nvme"
-    "xhci_pci"
-    "ahci"
-    "usbhid"
-    "sd_mod"
-  ];
-  boot.initrd.kernelModules = [
-    "nvidia"
-    "nvidia_modeset"
-    "nvidia_uvm"
-    "nvidia_drm"
-  ];
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.kernelParams = [
-    "amd_pstate=active"
-    "quiet"
-    "nvidia_drm.fbdev=1"
-    "nvidia_drm.modeset=1"
-  ];
-  boot.extraModulePackages = [ ];
+  boot = {
+    initrd = {
+      availableKernelModules = [
+        "nvme"
+        "xhci_pci"
+        "ahci"
+        "usbhid"
+        "sd_mod"
+      ];
+      kernelModules = [
+        "nvidia"
+        "nvidia_modeset"
+        "nvidia_uvm"
+        "nvidia_drm"
+      ];
+    };
+    kernelModules = [ "kvm-amd" ];
+    kernelParams = [
+      "amd_pstate=active"
+      "quiet"
+      "nvidia_drm.fbdev=1"
+      "nvidia_drm.modeset=1"
+    ];
+    extraModulePackages = [ ];
+  };
 
-  hardware.enableRedistributableFirmware = true;
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  hardware.graphics.enable = true;
-  hardware.graphics.enable32Bit = true;
-  hardware.nvidia = {
-    modesetting.enable = true;
-    nvidiaSettings = true;
-    open = true;
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
-    powerManagement.enable = true;
+  hardware = {
+    enableRedistributableFirmware = true;
+    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
+    nvidia = {
+      modesetting.enable = true;
+      nvidiaSettings = true;
+      open = true;
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
+      powerManagement.enable = true;
+    };
   };
 
   services.xserver.videoDrivers = [ "nvidia" ];
