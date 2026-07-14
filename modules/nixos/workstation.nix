@@ -8,12 +8,11 @@
     (import ./sops.nix { inherit inputs; })
     (import ./nix-base.nix { inherit inputs; })
     (import ./users-matthisk.nix { inherit inputs; })
-    (import ./services/nordvpn.nix { inherit inputs; })
+    (import ./localsend.nix { inherit inputs; })
     ./locale-de-en.nix
     ./audio-pipewire.nix
     ./sudo-wheel-passwordless.nix
     ./networking.nix
-    ./localsend.nix
     ./dev-mode.nix
   ];
 
