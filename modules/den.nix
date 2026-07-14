@@ -12,29 +12,31 @@ let
   matthiskHomeModule = import ./home/matthisk.nix { inherit inputs; };
 in
 {
-  den.schema.user.classes = lib.mkDefault [ "homeManager" ];
+  den = {
+    schema.user.classes = lib.mkDefault [ "homeManager" ];
 
-  den.hosts.x86_64-linux = {
-    matthisk-laptop-newxos.users.matthisk = { };
-    matthisk-desktop-newxos.users.matthisk = { };
-  };
-
-  den.aspects = {
-    workstation.nixos = workstationModule;
-
-    matthisk-laptop-newxos = {
-      includes = [ den.aspects.workstation ];
-      nixos = laptopModule;
+    hosts.x86_64-linux = {
+      matthisk-laptop-newxos.users.matthisk = { };
+      matthisk-desktop-newxos.users.matthisk = { };
     };
 
-    matthisk-desktop-newxos = {
-      includes = [ den.aspects.workstation ];
-      nixos = desktopModule;
-    };
+    aspects = {
+      workstation.nixos = workstationModule;
 
-    matthisk = {
-      homeManager = matthiskHomeModule;
-      provides.to-hosts.nixos = matthiskHostModule;
+      matthisk-laptop-newxos = {
+        includes = [ den.aspects.workstation ];
+        nixos = laptopModule;
+      };
+
+      matthisk-desktop-newxos = {
+        includes = [ den.aspects.workstation ];
+        nixos = desktopModule;
+      };
+
+      matthisk = {
+        homeManager = matthiskHomeModule;
+        provides.to-hosts.nixos = matthiskHostModule;
+      };
     };
   };
 }
