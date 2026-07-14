@@ -8,12 +8,50 @@
     };
     phenix-pins.url = "github:matthis-k/phenix-pins";
     nixpkgs.follows = "phenix-pins/nixpkgs";
+    home-manager.follows = "phenix-pins/home-manager";
+    sops-nix.follows = "phenix-pins/sops-nix";
+
     phenix-tend = {
       url = "github:matthis-k/phenix-tend";
       inputs.phenix-pins.follows = "phenix-pins";
     };
-    home-manager.follows = "phenix-pins/home-manager";
-    sops-nix.follows = "phenix-pins/sops-nix";
+
+    phenix-de = {
+      url = "github:matthis-k/phenix-de/migration/newxos-desktop-config";
+      inputs = {
+        phenix-pins.follows = "phenix-pins";
+        phenix-tend.follows = "phenix-tend";
+        flake-parts.follows = "flake-parts";
+        home-manager.follows = "home-manager";
+      };
+    };
+
+    phenix-nvim = {
+      url = "github:matthis-k/phenix-nvim";
+      inputs = {
+        phenix-pins.follows = "phenix-pins";
+        phenix-tend.follows = "phenix-tend";
+        flake-parts.follows = "flake-parts";
+      };
+    };
+
+    phenix-agent-harness = {
+      url = "github:matthis-k/phenix-agent-harness";
+      inputs = {
+        phenix-pins.follows = "phenix-pins";
+        phenix-tend.follows = "phenix-tend";
+      };
+    };
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nordvpn-flake = {
+      url = "github:connerohnesorge/nordvpn-flake/f802a2efd8225116158371a8c85db28e7b0846dd";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
