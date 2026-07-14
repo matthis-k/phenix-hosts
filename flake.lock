@@ -1039,11 +1039,11 @@
         "zen-flake": "zen-flake"
       },
       "locked": {
-        "lastModified": 1783991458,
-        "narHash": "sha256-aH+H9Lf5KuBenBsiNHXZwwFt0xjNhnqrFWYpR+mLRFo=",
+        "lastModified": 1783992296,
+        "narHash": "sha256-DqNAuMDfEDR1bHfCwvWIB3ocY50E6Ky9MK0y+qnwUaY=",
         "owner": "matthis-k",
         "repo": "phenix-de",
-        "rev": "4c0210ba843a169cffe40d57a78e04bf14327765",
+        "rev": "f41e9b9d1ac8fb84280e620fd76854e665eb05fa",
         "type": "github"
       },
       "original": {
