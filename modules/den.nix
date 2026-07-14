@@ -5,35 +5,43 @@
   ...
 }:
 let
-  workstationModule = import ./nixos/workstation.nix { inherit inputs; };
-  laptopModule = import ./nixos/hosts/laptop.nix;
-  desktopModule = import ./nixos/hosts/desktop.nix;
+  inventory = import ./inventory.nix;
+  laptop = inventory.hosts.laptop;
+  desktop = inventory.hosts.desktop;
+
+  workstationModule = import ./nixos/workstation.nix { inherit inputs inventory; };
+  laptopModule = import ./nixos/hosts/laptop.nix { host = laptop; };
+  desktopModule = import ./nixos/hosts/desktop.nix { host = desktop; };
   matthiskHostModule = import ./nixos/users-matthisk.nix;
-  matthiskHomeModule = import ./home/matthisk.nix { inherit inputs; };
+  matthiskHomeModule = import ./home/matthisk.nix { inherit inputs inventory; };
 in
 {
   den = {
     schema.user.classes = lib.mkDefault [ "homeManager" ];
 
     hosts.x86_64-linux = {
-      matthisk-laptop-phenix.users.matthisk = { };
-      matthisk-desktop-phenix.users.matthisk = { };
+      ${laptop.hostName} = {
+        users.${inventory.primaryUser} = { };
+      };
+      ${desktop.hostName} = {
+        users.${inventory.primaryUser} = { };
+      };
     };
 
     aspects = {
       workstation.nixos = workstationModule;
 
-      matthisk-laptop-phenix = {
+      ${laptop.hostName} = {
         includes = [ den.aspects.workstation ];
         nixos = laptopModule;
       };
 
-      matthisk-desktop-phenix = {
+      ${desktop.hostName} = {
         includes = [ den.aspects.workstation ];
         nixos = desktopModule;
       };
 
-      matthisk = {
+      ${inventory.primaryUser} = {
         homeManager = matthiskHomeModule;
         provides.to-hosts.nixos = matthiskHostModule;
       };
