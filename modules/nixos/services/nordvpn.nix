@@ -6,8 +6,26 @@
 }:
 let
   cfg = config.phenix.nordvpn;
-  nordvpnPackage = pkgs.nordvpn;
-  nordvpn = "${nordvpnPackage}/bin/nordvpn";
+  daemonUser = "nordvpn";
+  daemonGroup = "nordvpn";
+
+  nordvpnPackage =
+    let
+      cli = pkgs.nordvpn.cli.overrideAttrs (old: {
+        preBuild = old.preBuild or "";
+        postFixup = "";
+      });
+    in
+    pkgs.symlinkJoin {
+      inherit (pkgs.nordvpn) pname version meta;
+      paths = [
+        cli
+        pkgs.nordvpn.gui
+      ];
+    };
+
+  nordvpn = lib.getExe' nordvpnPackage "nordvpn";
+  networkManagerWaitOnline = lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
   groupArgs = lib.optionals cfg.dedicatedIp [
     "--group"
     "Dedicated_IP"
@@ -24,7 +42,7 @@ let
 in
 {
   options.phenix.nordvpn = {
-    enable = lib.mkEnableOption "the migrated NordVPN workstation configuration";
+    enable = lib.mkEnableOption "the declarative NordVPN workstation configuration";
 
     technology = lib.mkOption {
       type = lib.types.enum [
@@ -48,14 +66,14 @@ in
     networking.firewall.checkReversePath = "loose";
 
     users = {
-      groups.nordvpn = { };
+      groups.${daemonGroup} = { };
       users = {
-        nordvpn = {
-          description = "NordVPN daemon user";
-          group = "nordvpn";
+        ${daemonUser} = {
+          description = "User that runs nordvpnd";
+          group = daemonGroup;
           isSystemUser = true;
         };
-        matthisk.extraGroups = [ "nordvpn" ];
+        matthisk.extraGroups = [ daemonGroup ];
       };
     };
 
@@ -66,7 +84,7 @@ in
       extraConfig = ''
         polkit.addRule(function(action, subject) {
           if (action.id == "org.freedesktop.resolve1.set-dns-servers"
-              && subject.isInGroup("nordvpn")) {
+              && subject.isInGroup("${daemonGroup}")) {
             return polkit.Result.YES;
           }
         });
@@ -82,9 +100,9 @@ in
         socketConfig = {
           DirectoryMode = "0750";
           NoDelay = true;
-          SocketGroup = "nordvpn";
+          SocketGroup = daemonGroup;
           SocketMode = "0770";
-          SocketUser = "nordvpn";
+          SocketUser = daemonUser;
         };
       };
 
@@ -94,12 +112,21 @@ in
           after = [ "network-online.target" ];
           wants = [ "network-online.target" ];
           wantedBy = [ "multi-user.target" ];
-          path = [ nordvpnPackage ];
+          path =
+            (with pkgs; [
+              e2fsprogs
+              iproute2
+              libxslt
+              nftables
+              procps
+              wireguard-tools
+            ])
+            ++ [ nordvpnPackage ];
           serviceConfig = {
             AmbientCapabilities = "CAP_NET_ADMIN";
             CapabilityBoundingSet = "CAP_NET_ADMIN";
-            ExecStart = "${nordvpnPackage}/bin/nordvpnd";
-            Group = "nordvpn";
+            ExecStart = lib.getExe' nordvpnPackage "nordvpnd";
+            Group = daemonGroup;
             KillMode = "process";
             NonBlocking = true;
             Requires = "nordvpnd.socket";
@@ -109,7 +136,7 @@ in
             RuntimeDirectoryMode = "0750";
             StateDirectory = "nordvpn";
             StateDirectoryMode = "0750";
-            User = "nordvpn";
+            User = daemonUser;
           };
         };
 
@@ -118,13 +145,14 @@ in
           after = [
             "network-online.target"
             "nordvpnd.service"
+            "nordvpnd.socket"
           ]
-          ++ lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
-          wants = [
-            "network-online.target"
+          ++ networkManagerWaitOnline;
+          requires = [
             "nordvpnd.service"
-          ]
-          ++ lib.optional config.networking.networkmanager.enable "NetworkManager-wait-online.service";
+            "nordvpnd.socket"
+          ];
+          wants = [ "network-online.target" ] ++ networkManagerWaitOnline;
           wantedBy = [ "multi-user.target" ];
 
           restartTriggers = [
@@ -141,17 +169,21 @@ in
             Type = "oneshot";
             RemainAfterExit = true;
             User = "matthisk";
-            SupplementaryGroups = [ "nordvpn" ];
+            SupplementaryGroups = [ daemonGroup ];
+            TimeoutStartSec = "2min";
           };
 
           script = ''
             set -euo pipefail
 
-            attempt=0
-            until ${nordvpn} settings >/dev/null 2>&1; do
-              attempt=$((attempt + 1))
-              if [ "$attempt" -ge 30 ]; then
-                echo "NordVPN CLI did not become ready" >&2
+            last_error=""
+            for attempt in $(seq 1 60); do
+              if output="$(${nordvpn} settings 2>&1)"; then
+                break
+              fi
+              last_error="$output"
+              if [ "$attempt" -eq 60 ]; then
+                printf 'NordVPN CLI did not become ready: %s\n' "$last_error" >&2
                 exit 1
               fi
               sleep 1
@@ -229,7 +261,7 @@ in
         wants = [ "network-online.target" ];
         wantedBy = [ "graphical-session.target" ];
         serviceConfig = {
-          ExecStart = "${nordvpnPackage}/bin/norduserd";
+          ExecStart = lib.getExe' nordvpnPackage "norduserd";
           NonBlocking = true;
           Restart = "on-failure";
           RestartSec = 5;
