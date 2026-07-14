@@ -7,6 +7,7 @@
 }:
 let
   homeNetworkPublicKey = builtins.readFile ../../secrets/home_network_id.pub;
+  enableRuntimeLuaImport = config.phenix.de.hyprland.enableRuntimeLuaImport or false;
 in
 {
   imports = [
@@ -66,7 +67,7 @@ in
     imports = [ (import ../home/matthisk.nix { inherit inputs; }) ];
     phenix.devMode = config.phenix.devMode;
 
-    home.file.".config/hypr/nix-import.lua" = lib.mkIf config.phenix.de.hyprland.enableRuntimeLuaImport {
+    home.file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
       source = lib.mkForce (
         pkgs.runCommand "phenix-hyprland-nix-import-symlink" { } ''
           ln -s /run/phenix/hypr/nix-import.lua "$out"
