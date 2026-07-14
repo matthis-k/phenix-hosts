@@ -23,6 +23,7 @@
   sops.secrets.nordvpn_token = {
     format = "binary";
     mode = "0400";
+    owner = "matthisk";
     path = "/run/secrets/nordvpn_token";
     sopsFile = ../../secrets/nordvpn_token;
   };
