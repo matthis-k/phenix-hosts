@@ -62,23 +62,28 @@ in
     (import ./context.nix { inherit inventory; })
     ./users-matthisk-base.nix
     (import ./users-matthisk-ssh.nix { inherit inventory; })
+    ./dev-tools.nix
     ./git.nix
     inputs.phenix-de.homeModules.default
   ];
 
-  config.home = {
-    packages = [
-      phenixCli
-      inputs.phenix-nvim.packages.${system}.nvim-nix
-      piPackage
-    ];
+  config = {
+    phenix.devTools.enable = true;
 
-    file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
-      source = lib.mkForce (
-        pkgs.runCommand "phenix-hyprland-nix-import-symlink" { } ''
-          ln -s /run/phenix/hypr/nix-import.lua "$out"
-        ''
-      );
+    home = {
+      packages = [
+        phenixCli
+        inputs.phenix-nvim.packages.${system}.nvim-nix
+        piPackage
+      ];
+
+      file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
+        source = lib.mkForce (
+          pkgs.runCommand "phenix-hyprland-nix-import-symlink" { } ''
+            ln -s /run/phenix/hypr/nix-import.lua "$out"
+          ''
+        );
+      };
     };
   };
 }

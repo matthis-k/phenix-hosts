@@ -32,7 +32,12 @@ Primary Home Manager modules:
 - `homeModules.context`
 - `homeModules.matthiskBase`
 - `homeModules.matthiskSsh`
+- `homeModules.devTools`
 - `homeModules.git`
+
+`homeModules.devTools` provides a configurable general-purpose CLI toolkit under
+`phenix.devTools`. Its defaults include tools for structured data, search, HTTP,
+archives, shell validation, command watching, benchmarking, and task execution.
 
 ## Development
 
