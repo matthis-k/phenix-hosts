@@ -35,9 +35,11 @@ Primary Home Manager modules:
 - `homeModules.devTools`
 - `homeModules.git`
 
-`homeModules.devTools` provides a configurable general-purpose CLI toolkit under
-`phenix.devTools`. Its defaults include tools for structured data, search, HTTP,
-archives, shell validation, command watching, benchmarking, and task execution.
+`homeModules.devTools` provides a configurable, language-agnostic terminal and
+development toolkit under `phenix.devTools`. Its defaults cover Unix text and file
+utilities, Git and GitHub, task and build commands, structured data, archives,
+repository navigation, synchronization, benchmarking, and codebase statistics.
+Language-specific toolchains and linters remain in repository dev shells.
 
 ## Development
 
