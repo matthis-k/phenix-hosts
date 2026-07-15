@@ -9,32 +9,46 @@ let
 in
 {
   options.phenix.devTools = {
-    enable = lib.mkEnableOption "the general-purpose Phenix development CLI toolkit";
+    enable = lib.mkEnableOption "the language-agnostic Phenix terminal and development toolkit";
 
     packages = lib.mkOption {
       type = lib.types.listOf lib.types.package;
       default = with pkgs; [
         bat
+        bzip2
+        coreutils
         curl
-        entr
+        diffutils
         eza
         fd
         file
+        findutils
+        gawk
+        gh
+        gitFull
+        gnumake
+        gnugrep
+        gnused
+        gnutar
+        gzip
         hyperfine
         jq
         just
         moreutils
+        patch
         ripgrep
-        shellcheck
-        shfmt
+        rsync
+        tokei
         tree
         unzip
         wget
+        which
+        xz
         yq-go
         zip
       ];
-      defaultText = lib.literalExpression "with pkgs; [ bat curl entr eza fd file hyperfine jq just moreutils ripgrep shellcheck shfmt tree unzip wget yq-go zip ]";
-      description = "General-purpose command-line tools installed for development and repository work.";
+      defaultText = lib.literalExpression "with pkgs; [ bat bzip2 coreutils curl diffutils eza fd file findutils gawk gh gitFull gnumake gnugrep gnused gnutar gzip hyperfine jq just moreutils patch ripgrep rsync tokei tree unzip wget which xz yq-go zip ]";
+      description = "Language-agnostic command-line utilities for terminal use, repository work, builds, data processing, archives, and measurement.";
     };
   };
 
