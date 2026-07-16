@@ -1,3 +1,53 @@
+         1130|     in
+
+       … from call site
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:377:33:
+          376|     listToAttrs (
+          377|       concatLists (reverseList (mapAttrsToList (name: value: attrsToList (f name value)) v))
+             |                                 ^
+          378|     );
+
+       … while calling 'mapAttrsToList'
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:1089:23:
+         1088|   */
+         1089|   mapAttrsToList = f: attrs: attrValues (mapAttrs f attrs);
+             |                       ^
+         1090|
+
+       … while calling the 'attrValues' builtin
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:1089:30:
+         1088|   */
+         1089|   mapAttrsToList = f: attrs: attrValues (mapAttrs f attrs);
+             |                              ^
+         1090|
+
+       … while calling the 'mapAttrs' builtin
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:1089:42:
+         1088|   */
+         1089|   mapAttrsToList = f: attrs: attrValues (mapAttrs f attrs);
+             |                                          ^
+         1090|
+
+       … from call site
+         at «github:cachix/devenv/0c3701d515644076f51f1db04e349b4ac9b92b32»/flake-module.nix:66:19:
+           65|                   )
+           66|                   devenv.containers
+             |                   ^
+           67|               )
+
+       … while calling anonymous lambda
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/types.nix:1025:18:
+         1024|             value = mapAttrs (
+         1025|               n: v:
+             |                  ^
+         1026|               if lazy then
+
+       … while evaluating the attribute 'optionalValue.value'
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:1312:41:
+         1311|
+         1312|     optionalValue = if isDefined then { value = mergedValue; } else { };
+             |                                         ^
+         1313|   };
 
        … while evaluating the attribute 'value'
          at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/types.nix:1480:13:
