@@ -30,7 +30,10 @@ jobs:
         run: |
           set -euo pipefail
           nix --accept-flake-config flake update phenix-agent-harness
-          echo PHENIX_LOCK_BEGIN
-          base64 -w0 flake.lock
-          echo
-          echo PHENIX_LOCK_END
+
+      - name: Upload generated lock
+        uses: actions/upload-artifact@84480863f228bb9747b473957fcc9e309aa96097 # v4.4.2
+        with:
+          name: generated-flake-lock
+          path: flake.lock
+          if-no-files-found: error
