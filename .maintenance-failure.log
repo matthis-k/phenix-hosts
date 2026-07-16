@@ -1,3 +1,103 @@
+
+       … while evaluating the attribute 'value'
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/types.nix:1480:13:
+         1479|             headError = checkDefsForError check loc defs;
+         1480|             value = configuration.config;
+             |             ^
+         1481|             valueMeta = { inherit configuration; };
+
+       … while evaluating the attribute 'config'
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:401:9:
+          400|         options = checked options;
+          401|         config = checked (removeAttrs config [ "_module" ]);
+             |         ^
+          402|         _module = checked (config._module);
+
+       … while calling the 'seq' builtin
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:401:18:
+          400|         options = checked options;
+          401|         config = checked (removeAttrs config [ "_module" ]);
+             |                  ^
+          402|         _module = checked (config._module);
+
+       … while evaluating a branch condition
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:304:9:
+          303|       checkUnmatched =
+          304|         if config._module.check && config._module.freeformType == null && merged.unmatchedDefns != [ ] then
+             |         ^
+          305|           let
+
+       … in the left operand of the AND (&&) operator
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:304:72:
+          303|       checkUnmatched =
+          304|         if config._module.check && config._module.freeformType == null && merged.unmatchedDefns != [ ] then
+             |                                                                        ^
+          305|           let
+
+       … in the left operand of the AND (&&) operator
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:304:33:
+          303|       checkUnmatched =
+          304|         if config._module.check && config._module.freeformType == null && merged.unmatchedDefns != [ ] then
+             |                                 ^
+          305|           let
+
+       … while evaluating a branch condition
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:295:9:
+          294|         in
+          295|         if declaredConfig._module.freeformType == null then
+             |         ^
+          296|           declaredConfig
+
+       … from call site
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:282:28:
+          281|           # For definitions that have an associated option
+          282|           declaredConfig = mapAttrsRecursiveCond (v: !isOption v) (_: v: v.value) options;
+             |                            ^
+          283|
+
+       … while calling 'mapAttrsRecursiveCond'
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:1187:14:
+         1186|   mapAttrsRecursiveCond =
+         1187|     cond: f: set:
+             |              ^
+         1188|     let
+
+       … while calling the 'mapAttrs' builtin
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:1196:5:
+         1195|     in
+         1196|     recurse [ ] set;
+             |     ^
+         1197|
+
+       … while evaluating the attribute 'matchedOptions'
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:937:15:
+          936|     {
+          937|       inherit matchedOptions;
+             |               ^
+          938|
+
+       … while calling the 'mapAttrs' builtin
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:927:24:
+          926|
+          927|       matchedOptions = mapAttrs (n: v: v.matchedOptions) resultsByName;
+             |                        ^
+          928|
+
+       … while calling the 'mapAttrs' builtin
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:875:23:
+          874|
+          875|       resultsByName = mapAttrs (
+             |                       ^
+          876|         name: decls:
+
+       … while calling the 'zipAttrsWith' builtin
+         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:791:21:
+          790|       # an attrset 'name' => list of submodules that declare ‘name’.
+          791|       declsByName = zipAttrs (
+             |                     ^
+          792|         map (
+
+       … while calling the 'map' builtin
          at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:792:9:
           791|       declsByName = zipAttrs (
           792|         map (
