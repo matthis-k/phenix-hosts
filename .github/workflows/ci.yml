@@ -30,6 +30,16 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Generate updated agent harness lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          nix --accept-flake-config flake update phenix-agent-harness
+          echo PHENIX_LOCK_BEGIN
+          base64 -w0 flake.lock
+          echo
+          echo PHENIX_LOCK_END
+
       - name: Run read-only Tend CI profile
         id: tend
         shell: bash
