@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -13,27 +13,31 @@ concurrency:
 
 jobs:
   lock:
-    name: Generate agent harness lock
+    name: Commit agent harness lock
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Check out repository
+      - name: Check out PR branch
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
 
       - name: Install Nix
         uses: cachix/install-nix-action@a49548c11d9846ad46ecc0115273879b045f001c # v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate updated agent harness lock
+      - name: Update and commit agent harness lock
         shell: bash
         run: |
           set -euo pipefail
           nix --accept-flake-config flake update phenix-agent-harness
-
-      - name: Upload generated lock
-        uses: actions/upload-artifact@84480863f228bb9747b473957fcc9e309aa96097 # v4.4.2
-        with:
-          name: generated-flake-lock
-          path: flake.lock
-          if-no-files-found: error
+          if git diff --quiet -- flake.lock; then
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add flake.lock
+          git commit -m "chore: update phenix-agent-harness lock"
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
