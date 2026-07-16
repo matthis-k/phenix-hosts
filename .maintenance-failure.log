@@ -1,62 +1,76 @@
-         1130|     in
+warning: Git tree '/home/runner/work/phenix-hosts/phenix-hosts' is dirty
+unpacking 'github:matthis-k/phenix-agent-harness/49bcd5797cbd6418e2e1f5ffa10eea928cc68101?narHash=sha256-aRfEcQwhAlG5zg3/3YHwu%2B5syr7ZRgmOhFXgfa1YuCI%3D' into the Git cache...
+unpacking 'github:matthis-k/phenix-stitch/63520f303c9f37bce51cf8c49b4145d69b8aab4d?narHash=sha256-HJSnlWm4luXRRsWspJzYDdwabflx%2BREvxKjdl2hRznQ%3D' into the Git cache...
+unpacking 'github:matthis-k/phenix-de/568e4c3003b51ccb18e824c9642b4f3814246a99?narHash=sha256-Zg1LIgNT8pEgR%2BK5DRmGTVJCAFeDvXMkI0lE3Sa44uk%3D' into the Git cache...
+unpacking 'github:matthis-k/phenix-nvim/6c5fe44c3e2b4b180d1d15d42f2d738f9ca11755?narHash=sha256-ptL5Xbo0XidNfIaaq5FsXd7VrDOYef/NwNGIV5TvI2w%3D' into the Git cache...
+unpacking 'github:matthis-k/phenix-tend/92fbe3e3eb76b2b63c4799afece4a2957dc57347?narHash=sha256-QyvAcS2wLhk3oxOqzuG/BkqDs4QhR6c7wcYLTDtVERs%3D' into the Git cache...
+unpacking 'github:hercules-ci/flake-parts/17c9d6cdfc60c64f4ee8d306f9bc0b4ccb51481e?narHash=sha256-vp6Y/Grm98ESt6ceOkWiHWyZRDV3J1RID4w%2B6NWK9yA%3D' into the Git cache...
+copying path '/nix/store/xqn9dl7vvji4mmp8h57xc39p2dp752vx-source' from 'https://cache.nixos.org'...
+unpacking 'github:vic/flake-file/ce63eaf7ebfe04a176653f66385a7f0a36380cee?narHash=sha256-N3q/SP2Ropk336e9KSgLh7kpROY6P70dprYdbPIfd5c%3D' into the Git cache...
+unpacking 'github:denful/den/84b514929d25c7b2f8e9cfba5ff87d395c2b9263?narHash=sha256-wVN3xYYL5erapo9FQp9sfmN5tZ65whwLlK7z%2BiQnTgw%3D' into the Git cache...
+error:
+       … while calling anonymous lambda
+         at «flakes-internal»/call-flake.nix:15:1:
+           14| # This is `prim_fetchFinalTree`.
+           15| fetchTreeFinal:
+             | ^
+           16|
+
+       … while evaluating the attribute 'root.result'
+         at «flakes-internal»/call-flake.nix:94:7:
+           93|     {
+           94|       result =
+             |       ^
+           95|         if node.flake or true then
+
+       … in the left operand of the update (//) operator
+         at «flakes-internal»/call-flake.nix:75:9:
+           74|       result =
+           75|         outputs
+             |         ^
+           76|         # We add the sourceInfo attribute for its metadata, as they are
 
        … from call site
-         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:377:33:
-          376|     listToAttrs (
-          377|       concatLists (reverseList (mapAttrsToList (name: value: attrsToList (f name value)) v))
-             |                                 ^
-          378|     );
+         at «flakes-internal»/call-flake.nix:72:17:
+           71|
+           72|       outputs = flake.outputs (inputs // { self = result; });
+             |                 ^
+           73|
 
-       … while calling 'mapAttrsToList'
-         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:1089:23:
-         1088|   */
-         1089|   mapAttrsToList = f: attrs: attrValues (mapAttrs f attrs);
-             |                       ^
-         1090|
-
-       … while calling the 'attrValues' builtin
-         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:1089:30:
-         1088|   */
-         1089|   mapAttrsToList = f: attrs: attrValues (mapAttrs f attrs);
-             |                              ^
-         1090|
-
-       … while calling the 'mapAttrs' builtin
-         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/attrsets.nix:1089:42:
-         1088|   */
-         1089|   mapAttrsToList = f: attrs: attrValues (mapAttrs f attrs);
-             |                                          ^
-         1090|
+       … while calling 'outputs'
+         at /home/runner/work/phenix-hosts/phenix-hosts/flake.nix:4:13:
+            3| {
+            4|   outputs = inputs: import ./outputs.nix inputs;
+             |             ^
+            5|
 
        … from call site
-         at «github:cachix/devenv/0c3701d515644076f51f1db04e349b4ac9b92b32»/flake-module.nix:66:19:
-           65|                   )
-           66|                   devenv.containers
-             |                   ^
-           67|               )
+         at /home/runner/work/phenix-hosts/phenix-hosts/flake.nix:4:21:
+            3| {
+            4|   outputs = inputs: import ./outputs.nix inputs;
+             |                     ^
+            5|
 
        … while calling anonymous lambda
-         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/types.nix:1025:18:
-         1024|             value = mapAttrs (
-         1025|               n: v:
-             |                  ^
-         1026|               if lazy then
+         at /home/runner/work/phenix-hosts/phenix-hosts/outputs.nix:1:1:
+            1| inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } ./modules
+             | ^
+            2|
 
-       … while evaluating the attribute 'optionalValue.value'
-         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:1312:41:
-         1311|
-         1312|     optionalValue = if isDefined then { value = mergedValue; } else { };
-             |                                         ^
-         1313|   };
+       … from call site
+         at /home/runner/work/phenix-hosts/phenix-hosts/outputs.nix:1:9:
+            1| inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } ./modules
+             |         ^
+            2|
 
-       … while evaluating the attribute 'value'
-         at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/types.nix:1480:13:
-         1479|             headError = checkDefsForError check loc defs;
-         1480|             value = configuration.config;
-             |             ^
-         1481|             valueMeta = { inherit configuration; };
+       … while calling 'mkFlake'
+         at «github:hercules-ci/flake-parts/17c9d6cdfc60c64f4ee8d306f9bc0b4ccb51481e?narHash=sha256-vp6Y/Grm98ESt6ceOkWiHWyZRDV3J1RID4w%2B6NWK9yA%3D»/lib.nix:160:21:
+          159|
+          160|     mkFlake = args: module:
+             |                     ^
+          161|       let
 
-       … while evaluating the attribute 'config'
+       … while evaluating the attribute 'config.processedFlake'
          at «github:NixOS/nixpkgs/e7a3ca8092b61ff85b6a45bf863ea2b2d6a661b3?narHash=sha256-UgCQzxeWI75XM8G%2BhPrPh%2BMKzEPjG3SpAj7dtqSbksA%3D»/lib/modules.nix:401:9:
           400|         options = checked options;
           401|         config = checked (removeAttrs config [ "_module" ]);
@@ -443,8 +457,9 @@
              |                                                     ^
           450|           );
 
-       error: Path 'devenv.nix' in the repository "/home/runner/work/phenix-hosts/phenix-hosts" is not tracked by Git.
-
-       To make it visible to Nix, run:
-
-       git -C "/home/runner/work/phenix-hosts/phenix-hosts" add -N "devenv.nix"
+       error: syntax error, unexpected '}', expecting identifier or 'or' or '${' or '"'
+       at /home/runner/work/phenix-hosts/phenix-hosts/modules/inputs.nix:7:16:
+            6|   flake-file.    inputs.nixpkgs.follows = "nixpkgs";
+            7|   flake-file.  };
+             |                ^
+            8|   flake-file.  mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
