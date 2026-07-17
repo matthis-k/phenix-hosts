@@ -11,7 +11,9 @@ jobs:
   normalize:
     if: github.event.pull_request.head.ref == 'refactor/standalone-devenv-maintenance'
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -25,6 +27,28 @@ jobs:
       - uses: cachix/cachix-action@v17
         with: { name: devenv }
       - run: nix profile add nixpkgs#devenv
+      - name: Wait for normalized harness branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            harness_flake="$({ gh api \
+              -H 'Accept: application/vnd.github.raw+json' \
+              'repos/matthis-k/phenix-agent-harness/contents/flake.nix?ref=refactor%2Fstandalone-devenv-maintenance' \
+              2>/dev/null || true; })"
+            harness_lock="$({ gh api \
+              -H 'Accept: application/vnd.github.raw+json' \
+              'repos/matthis-k/phenix-agent-harness/contents/flake.lock?ref=refactor%2Fstandalone-devenv-maintenance' \
+              2>/dev/null || true; })"
+            if [[ "$harness_flake" == *'refactor/scoped-stitch-maintenance'* ]] \
+              && [[ "$harness_lock" != *'phenix-tend'* ]] \
+              && [[ -n "$harness_lock" ]]; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo 'Normalized harness branch did not become ready' >&2
+          exit 1
       - name: Apply safe maintenance fixes
         shell: bash
         run: |
@@ -42,14 +66,21 @@ jobs:
           tail -n 260 write-flake.log
           exit "$status"
       - name: Normalize lock and publish
+        shell: bash
         run: |
+          set +e
+          nix flake lock --accept-flake-config > lock.log 2>&1
+          status=$?
+          tail -n 260 lock.log
+          if (( status != 0 )); then
+            exit "$status"
+          fi
           set -euo pipefail
-          nix flake lock --accept-flake-config
           rm .github/workflows/normalize-maintenance-pr.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add -A
-          git diff --cached --quiet || git commit -m "chore: normalize standalone maintenance"
+          git diff --cached --quiet || git commit -m "refactor: normalize host maintenance"
           git push origin HEAD:refactor/standalone-devenv-maintenance
       - name: Upload normalization diagnostics
         if: failure()
@@ -59,4 +90,5 @@ jobs:
           path: |
             normalize.log
             write-flake.log
+            lock.log
           if-no-files-found: warn
