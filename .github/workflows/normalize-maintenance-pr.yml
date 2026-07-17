@@ -1,4 +1,4 @@
-name: Normalize maintenance PR
+name: Normalize host maintenance PR
 
 on:
   push:
