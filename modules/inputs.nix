@@ -1,6 +1,6 @@
 {
   flake-file.inputs = {
-    phenix-pins.url = "github:matthis-k/phenix-pins?ref=refactor/standalone-devenv-maintenance";
+    phenix-pins.url = "github:matthis-k/phenix-pins";
 
     flake-file.follows = "phenix-pins/flake-file";
     flake-parts.follows = "phenix-pins/flake-parts";
@@ -11,7 +11,7 @@
     den.url = "github:denful/den";
 
     phenix-de = {
-      url = "github:matthis-k/phenix-de?ref=devenv-maintenance";
+      url = "github:matthis-k/phenix-de";
       inputs = {
         phenix-pins.follows = "phenix-pins";
         flake-parts.follows = "flake-parts";
@@ -20,7 +20,7 @@
     };
 
     phenix-nvim = {
-      url = "github:matthis-k/phenix-nvim?ref=refactor/standalone-devenv-maintenance";
+      url = "github:matthis-k/phenix-nvim";
       inputs = {
         phenix-pins.follows = "phenix-pins";
         flake-parts.follows = "flake-parts";
@@ -28,7 +28,7 @@
     };
 
     phenix-agent-harness = {
-      url = "github:matthis-k/phenix-agent-harness?ref=refactor/standalone-devenv-maintenance";
+      url = "github:matthis-k/phenix-agent-harness";
       inputs.phenix-pins.follows = "phenix-pins";
     };
 
