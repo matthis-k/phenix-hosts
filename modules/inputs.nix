@@ -10,19 +10,10 @@
 
     den.url = "github:denful/den";
 
-    phenix-tend = {
-      url = "github:matthis-k/phenix-tend";
-      inputs = {
-        phenix-pins.follows = "phenix-pins";
-        flake-parts.follows = "flake-parts";
-      };
-    };
-
     phenix-de = {
       url = "github:matthis-k/phenix-de";
       inputs = {
         phenix-pins.follows = "phenix-pins";
-        phenix-tend.follows = "phenix-tend";
         flake-parts.follows = "flake-parts";
         home-manager.follows = "home-manager";
       };
@@ -32,17 +23,13 @@
       url = "github:matthis-k/phenix-nvim";
       inputs = {
         phenix-pins.follows = "phenix-pins";
-        phenix-tend.follows = "phenix-tend";
         flake-parts.follows = "flake-parts";
       };
     };
 
     phenix-agent-harness = {
       url = "github:matthis-k/phenix-agent-harness";
-      inputs = {
-        phenix-pins.follows = "phenix-pins";
-        phenix-tend.follows = "phenix-tend";
-      };
+      inputs.phenix-pins.follows = "phenix-pins";
     };
 
     disko = {

@@ -43,11 +43,13 @@ Language-specific toolchains and linters remain in repository dev shells.
 
 ## Development
 
-Enter the development shell and use the Tend-backed helpers:
+Repository maintenance is defined in standalone `maintenance.nix` modules. Each
+command receives only its declared package dependencies; the project flake remains
+independent from devenv.
 
 ```console
 nix develop
-repo-check
-repo-fix
-repo-pushgate
+devenv test
+devenv tasks run maintenance:check
+devenv tasks run maintenance:fix
 ```
