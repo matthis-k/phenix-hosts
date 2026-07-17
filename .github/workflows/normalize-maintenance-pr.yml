@@ -25,11 +25,25 @@ jobs:
       - uses: cachix/cachix-action@v17
         with: { name: devenv }
       - run: nix profile add nixpkgs#devenv
-      - name: Regenerate and normalize
+      - name: Apply safe maintenance fixes
+        shell: bash
+        run: |
+          set +e
+          devenv tasks run maintenance:fix > normalize.log 2>&1
+          status=$?
+          tail -n 260 normalize.log
+          exit "$status"
+      - name: Regenerate generated flake
+        shell: bash
+        run: |
+          set +e
+          nix run .#write-flake > write-flake.log 2>&1
+          status=$?
+          tail -n 260 write-flake.log
+          exit "$status"
+      - name: Normalize lock and publish
         run: |
           set -euo pipefail
-          devenv tasks run maintenance:fix
-          nix run .#write-flake
           nix flake lock --accept-flake-config
           rm .github/workflows/normalize-maintenance-pr.yml
           git config user.name github-actions[bot]
@@ -37,3 +51,12 @@ jobs:
           git add -A
           git diff --cached --quiet || git commit -m "chore: normalize standalone maintenance"
           git push origin HEAD:refactor/standalone-devenv-maintenance
+      - name: Upload normalization diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hosts-normalize-log
+          path: |
+            normalize.log
+            write-flake.log
+          if-no-files-found: warn
