@@ -6,14 +6,16 @@
 }:
 let
   cfg = config.services.llm-server;
+  userName = config.phenix.user.name;
   ttsServiceName = "kokoro-fastapi";
   ttsImage = "kokoro-fastapi-gpu-sm120:latest";
-  webUIHostName = "matthisk-desktop-phenix.local";
+  ttsBindAddress = if cfg.ttsOpenFirewall then "0.0.0.0" else "127.0.0.1";
+  webUIHostName = config.phenix.host.localName;
   caddyLocalRootCert = "/run/caddy-local-root.crt";
   webUIPublicUrl = "https://${webUIHostName}";
-  ollamaUrl = "http://localhost:${toString cfg.ollamaPort}";
-  webUIUrl = "http://localhost:${toString cfg.webUIPort}";
-  ttsUrl = "http://localhost:${toString cfg.ttsPort}/v1";
+  ollamaUrl = "http://127.0.0.1:${toString config.services.ollama.port}";
+  webUIUrl = "http://127.0.0.1:${toString cfg.webUIPort}";
+  ttsUrl = "http://127.0.0.1:${toString cfg.ttsPort}/v1";
 in
 {
   options.services.llm-server = {
@@ -26,29 +28,6 @@ in
     };
 
     enableTTS = lib.mkEnableOption "local OpenAI-compatible Kokoro-FastAPI TTS service";
-
-    ollamaHost = lib.mkOption {
-      type = lib.types.str;
-      default = "0.0.0.0";
-      description = "Ollama bind address";
-    };
-
-    ollamaPort = lib.mkOption {
-      type = lib.types.port;
-      default = 11434;
-      description = "Ollama port";
-    };
-
-    ollamaModels = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = [
-        "qwen2.5:7b"
-        "qwen2.5-coder:7b"
-        "dolphin-mistral:7b"
-        "nomic-embed-text"
-      ];
-      description = "Ollama models to preload";
-    };
 
     webUIPort = lib.mkOption {
       type = lib.types.port;
@@ -87,7 +66,7 @@ in
     ttsOpenFirewall = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Open firewall for local TTS";
+      description = "Expose local TTS on all host interfaces";
     };
   };
 
@@ -100,14 +79,33 @@ in
     };
 
     hardware.nvidia-container-toolkit.enable = lib.mkIf cfg.enableTTS true;
-    virtualisation.docker.enable = lib.mkIf cfg.enableTTS true;
+
+    virtualisation = lib.mkIf cfg.enableTTS {
+      docker.enable = true;
+
+      oci-containers = {
+        backend = "docker";
+        containers.${ttsServiceName} = {
+          serviceName = ttsServiceName;
+          image = ttsImage;
+          pull = "never";
+          ports = [ "${ttsBindAddress}:${toString cfg.ttsPort}:8880" ];
+          devices = [ "nvidia.com/gpu=all" ];
+        };
+      };
+    };
 
     services = {
       ollama = lib.mkIf cfg.enableOllama {
         enable = true;
-        package = pkgs.ollama-cuda;
-        host = cfg.ollamaHost;
-        loadModels = cfg.ollamaModels;
+        package = lib.mkDefault pkgs.ollama-cuda;
+        host = lib.mkDefault "0.0.0.0";
+        loadModels = lib.mkDefault [
+          "qwen2.5:7b"
+          "qwen2.5-coder:7b"
+          "dolphin-mistral:7b"
+          "nomic-embed-text"
+        ];
       };
 
       open-webui = lib.mkIf cfg.enableOpenWebUI {
@@ -143,71 +141,38 @@ in
       };
     };
 
-    systemd.services = {
-      caddy-local-root-cert = lib.mkIf cfg.enableOpenWebUI {
-        description = "Publish Caddy local root certificate for browsers";
-        after = [ "caddy.service" ];
-        requires = [ "caddy.service" ];
-        wantedBy = [ "multi-user.target" ];
+    systemd.services.caddy-local-root-cert = lib.mkIf cfg.enableOpenWebUI {
+      description = "Publish Caddy local root certificate for browsers";
+      after = [ "caddy.service" ];
+      requires = [ "caddy.service" ];
+      wantedBy = [ "multi-user.target" ];
 
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStart = pkgs.writeShellScript "publish-caddy-local-root-cert" ''
-            set -eu
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = pkgs.writeShellScript "publish-caddy-local-root-cert" ''
+          set -eu
 
-            source=/var/lib/caddy/.local/share/caddy/pki/authorities/local/root.crt
+          source=/var/lib/caddy/.local/share/caddy/pki/authorities/local/root.crt
 
-            for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
-              if [ -r "$source" ]; then
-                ${pkgs.coreutils}/bin/install -m 0444 -o root -g root "$source" ${caddyLocalRootCert}
-                exit 0
-              fi
+          for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
+            if [ -r "$source" ]; then
+              ${pkgs.coreutils}/bin/install -m 0444 -o root -g root "$source" ${caddyLocalRootCert}
+              exit 0
+            fi
 
-              ${pkgs.coreutils}/bin/sleep 1
-            done
+            ${pkgs.coreutils}/bin/sleep 1
+          done
 
-            printf 'Caddy local root certificate was not readable at %s\n' "$source" >&2
-            exit 1
-          '';
-        };
-      };
-
-      ${ttsServiceName} = lib.mkIf cfg.enableTTS {
-        description = "Kokoro-FastAPI TTS Service";
-        after = [ "docker.service" ];
-        wants = [ "docker.service" ];
-        wantedBy = [ "multi-user.target" ];
-
-        serviceConfig = {
-          Type = "simple";
-          Restart = "always";
-          RestartSec = 10;
-          TimeoutStartSec = "5min";
-
-          ExecStart = lib.concatStringsSep " " [
-            "${pkgs.docker}/bin/docker"
-            "run"
-            "--rm"
-            "--name"
-            ttsServiceName
-            "--device"
-            "nvidia.com/gpu=all"
-            "-p"
-            "${toString cfg.ttsPort}:8880"
-            ttsImage
-          ];
-
-          ExecStop = "${pkgs.docker}/bin/docker stop ${ttsServiceName}";
-        };
+          printf 'Caddy local root certificate was not readable at %s\n' "$source" >&2
+          exit 1
+        '';
       };
     };
 
-    networking.firewall.allowedTCPPorts = lib.optionals cfg.ttsOpenFirewall [ cfg.ttsPort ];
+    networking.firewall.allowedTCPPorts =
+      lib.optionals (cfg.enableTTS && cfg.ttsOpenFirewall) [ cfg.ttsPort ];
 
-    users.users.matthisk.extraGroups = [
-      "ollama"
-      "docker"
-    ];
+    users.users.${userName}.extraGroups = lib.optionals cfg.enableTTS [ "docker" ];
   };
 }
