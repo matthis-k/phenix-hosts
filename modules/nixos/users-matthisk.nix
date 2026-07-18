@@ -5,9 +5,11 @@ let
   homeNetworkPublicKey = builtins.readFile ../../secrets/home_network_id.pub;
 in
 {
+  users.mutableUsers = false;
+
   users.users.${user.name} = {
     isNormalUser = true;
-    initialPassword = lib.mkDefault "";
+    hashedPassword = "!";
     description = user.name;
     openssh.authorizedKeys.keys = [ homeNetworkPublicKey ];
     extraGroups = [
