@@ -1,0 +1,33 @@
+name: Format QA patch
+
+on:
+  push:
+    branches: [fix/hosts-qa-hardening]
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: cachix/install-nix-action@a49548c11d9846ad46ecc0115273879b045f001c # v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+      - uses: cachix/cachix-action@v17
+        with:
+          name: devenv
+      - name: Install devenv
+        run: nix profile add nixpkgs#devenv
+      - name: Format Nix sources
+        run: devenv tasks run maintenance:fix:format
+      - name: Upload formatted module
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatted-llm-server
+          path: modules/nixos/services/llm-server.nix
+          if-no-files-found: error
