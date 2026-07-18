@@ -6,6 +6,8 @@
 }:
 let
   cfg = config.phenix.nordvpn;
+  userName = config.phenix.user.name;
+  tokenPath = "${config.phenix.paths.secrets}/nordvpn_token";
   daemonUser = "nordvpn";
   daemonGroup = "nordvpn";
 
@@ -73,7 +75,7 @@ in
           group = daemonGroup;
           isSystemUser = true;
         };
-        matthisk.extraGroups = [ daemonGroup ];
+        ${userName}.extraGroups = [ daemonGroup ];
       };
     };
 
@@ -168,7 +170,7 @@ in
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
-            User = "matthisk";
+            User = userName;
             SupplementaryGroups = [ daemonGroup ];
             TimeoutStartSec = "2min";
           };
@@ -190,7 +192,7 @@ in
             done
 
             if ! ${nordvpn} account >/dev/null 2>&1; then
-              token="$(tr -d '\r\n' < /run/secrets/nordvpn_token)"
+              token="$(tr -d '\r\n' < ${lib.escapeShellArg tokenPath})"
               ${nordvpn} login --token "$token"
             fi
 

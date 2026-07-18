@@ -5,9 +5,12 @@ let
   homeNetworkPublicKey = builtins.readFile ../../secrets/home_network_id.pub;
 in
 {
+  users.mutableUsers = false;
+
   users.users.${user.name} = {
     isNormalUser = true;
-    initialPassword = lib.mkDefault "";
+    # Password authentication is deliberately locked; access uses SSH keys or display auto-login.
+    hashedPassword = "!";
     description = user.name;
     openssh.authorizedKeys.keys = [ homeNetworkPublicKey ];
     extraGroups = [
