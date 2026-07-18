@@ -170,8 +170,9 @@ in
       };
     };
 
-    networking.firewall.allowedTCPPorts =
-      lib.optionals (cfg.enableTTS && cfg.ttsOpenFirewall) [ cfg.ttsPort ];
+    networking.firewall.allowedTCPPorts = lib.optionals (cfg.enableTTS && cfg.ttsOpenFirewall) [
+      cfg.ttsPort
+    ];
 
     users.users.${userName}.extraGroups = lib.optionals cfg.enableTTS [ "docker" ];
   };
