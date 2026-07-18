@@ -9,6 +9,7 @@ in
 
   users.users.${user.name} = {
     isNormalUser = true;
+    # Password authentication is deliberately locked; access uses SSH keys or display auto-login.
     hashedPassword = "!";
     description = user.name;
     openssh.authorizedKeys.keys = [ homeNetworkPublicKey ];
