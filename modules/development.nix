@@ -55,7 +55,9 @@
             commands = {
               nix-format = {
                 description = "Nix formatting";
-                ci = sourceCi // { stepName = "Nix formatting"; };
+                ci = sourceCi // {
+                  stepName = "Nix formatting";
+                };
                 runtimeInputs = pkgs: [
                   pkgs.findutils
                   pkgs.git
@@ -73,7 +75,9 @@
 
               statix = {
                 description = "Nix static analysis";
-                ci = sourceCi // { stepName = "Statix"; };
+                ci = sourceCi // {
+                  stepName = "Statix";
+                };
                 runtimeInputs = pkgs: [
                   pkgs.git
                   pkgs.statix
@@ -86,7 +90,9 @@
 
               deadnix = {
                 description = "Unused Nix code";
-                ci = sourceCi // { stepName = "Deadnix"; };
+                ci = sourceCi // {
+                  stepName = "Deadnix";
+                };
                 runtimeInputs = pkgs: [
                   pkgs.deadnix
                   pkgs.git
@@ -99,7 +105,9 @@
 
               actionlint = {
                 description = "GitHub Actions syntax";
-                ci = sourceCi // { stepName = "Actionlint"; };
+                ci = sourceCi // {
+                  stepName = "Actionlint";
+                };
                 runtimeInputs = pkgs: [
                   pkgs.actionlint
                   pkgs.findutils
@@ -115,7 +123,9 @@
 
               workflow-sync = {
                 description = "Committed workflow matches the maintenance declaration";
-                ci = sourceCi // { stepName = "Generated workflow"; };
+                ci = sourceCi // {
+                  stepName = "Generated workflow";
+                };
                 runtimeInputs = pkgs: [
                   pkgs.diffutils
                   pkgs.git
@@ -144,7 +154,9 @@
             commands = {
               laptop = {
                 description = "Build the complete laptop NixOS system";
-                ci = productCi // { stepName = "Laptop system build"; };
+                ci = productCi // {
+                  stepName = "Laptop system build";
+                };
                 runtimeInputs = pkgs: [
                   pkgs.git
                   pkgs.nix
@@ -158,7 +170,9 @@
 
               desktop = {
                 description = "Build the complete desktop NixOS system";
-                ci = productCi // { stepName = "Desktop system build"; };
+                ci = productCi // {
+                  stepName = "Desktop system build";
+                };
                 runtimeInputs = pkgs: [
                   pkgs.git
                   pkgs.nix
