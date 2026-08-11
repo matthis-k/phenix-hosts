@@ -15,24 +15,33 @@
     nixpkgs.follows = "phenix-pins/nixpkgs";
     phenix-agent-harness = {
       url = "github:matthis-k/phenix-agent-harness";
-      inputs.phenix-pins.follows = "phenix-pins";
+      inputs = {
+        phenix-flake-ci.follows = "phenix-flake-ci";
+        phenix-pins.follows = "phenix-pins";
+      };
     };
     phenix-de = {
       url = "github:matthis-k/phenix-de";
       inputs = {
         flake-parts.follows = "flake-parts";
         home-manager.follows = "home-manager";
+        phenix-flake-ci.follows = "phenix-flake-ci";
         phenix-pins.follows = "phenix-pins";
       };
     };
+    phenix-flake-ci.url = "github:matthis-k/phenix-flake-ci";
     phenix-nvim = {
       url = "github:matthis-k/phenix-nvim";
       inputs = {
         flake-parts.follows = "flake-parts";
+        phenix-flake-ci.follows = "phenix-flake-ci";
         phenix-pins.follows = "phenix-pins";
       };
     };
-    phenix-pins.url = "github:matthis-k/phenix-pins";
+    phenix-pins = {
+      url = "github:matthis-k/phenix-pins";
+      inputs.phenix-flake-ci.follows = "phenix-flake-ci";
+    };
     sops-nix.follows = "phenix-pins/sops-nix";
   };
 }

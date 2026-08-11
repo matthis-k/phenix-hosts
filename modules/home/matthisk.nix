@@ -8,7 +8,7 @@
 }:
 let
   system = pkgs.stdenv.hostPlatform.system;
-  piPackage = inputs.phenix-agent-harness.packages.${system}.pi;
+  piPackage = inputs.phenix-agent-harness.packages.${system}.pi-coding-agent;
   enableRuntimeLuaImport =
     osConfig != null
     && lib.attrByPath [
