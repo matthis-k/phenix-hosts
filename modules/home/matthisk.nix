@@ -8,7 +8,7 @@
 }:
 let
   system = pkgs.stdenv.hostPlatform.system;
-  piPackage = inputs.phenix-agent-harness.packages.${system}.pi;
+  harnessPackage = inputs.phenix-harness.packages.${system}.default;
   enableRuntimeLuaImport =
     osConfig != null
     && lib.attrByPath [
@@ -24,16 +24,6 @@ let
       default_flake=${lib.escapeShellArg config.phenix.paths.flake}
       command="''${1:-}"
       case "$command" in
-        ai)
-          shift
-          workspace="''${PHENIX_FLAKE:-$default_flake}"
-          if [ ! -d "$workspace" ]; then
-            echo "Phenix workspace not found at $workspace" >&2
-            exit 1
-          fi
-          cd "$workspace"
-          exec ${piPackage}/bin/pi "$@"
-          ;;
         switch)
           shift
           flake="''${PHENIX_FLAKE:-$default_flake}"
@@ -49,7 +39,7 @@ let
           exec ${pkgs.systemd}/bin/systemctl --user restart phenix-shell.service "$@"
           ;;
         *)
-          echo "usage: phenix {ai|switch|reload-shell}" >&2
+          echo "usage: phenix {switch|reload-shell}" >&2
           exit 2
           ;;
       esac
@@ -74,7 +64,7 @@ in
       packages = [
         phenixCli
         inputs.phenix-nvim.packages.${system}.nvim-nix
-        piPackage
+        harnessPackage
       ];
 
       file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
