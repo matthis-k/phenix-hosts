@@ -19,17 +19,27 @@
       };
     };
 
+    phenix-conductor = {
+      url = "github:matthis-k/phenix-conductor";
+      inputs.phenix-pins.follows = "phenix-pins";
+    };
+
+    phenix-harness = {
+      url = "github:matthis-k/phenix-harness";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        phenix-conductor.follows = "phenix-conductor";
+      };
+    };
+
     phenix-nvim = {
       url = "github:matthis-k/phenix-nvim";
       inputs = {
         phenix-pins.follows = "phenix-pins";
         flake-parts.follows = "flake-parts";
+        phenix-conductor.follows = "phenix-conductor";
+        phenix-harness.follows = "phenix-harness";
       };
-    };
-
-    phenix-agent-harness = {
-      url = "github:matthis-k/phenix-agent-harness";
-      inputs.phenix-pins.follows = "phenix-pins";
     };
 
     disko = {
