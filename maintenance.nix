@@ -47,6 +47,18 @@ in
         done
       '';
     };
+    "maintenance-check-agent-boundary" = {
+      packages = [ pkgs.git ];
+      exec = ''
+        ${root}
+        legacy_agent="$(printf 'phenix-agent-%s' 'harness')"
+        legacy_opencode="$(printf 'phenix-%s' 'opencode')"
+        legacy_pi="$(printf 'pi-%s' 'src')"
+        for legacy in "$legacy_agent" "$legacy_opencode" "$legacy_pi"; do
+          ! git grep -nF "$legacy" -- . ':(exclude).github/workflows/**'
+        done
+      '';
+    };
     "maintenance-fix-statix" = {
       packages = [
         pkgs.git
@@ -77,6 +89,7 @@ in
     "maintenance:deadnix".exec = "maintenance-check-deadnix";
     "maintenance:flake".exec = "maintenance-check-flake";
     "maintenance:hosts".exec = "maintenance-check-hosts";
+    "maintenance:agent-boundary".exec = "maintenance-check-agent-boundary";
 
     "maintenance:check" = {
       exec = "true";
@@ -86,6 +99,7 @@ in
         "maintenance:deadnix"
         "maintenance:flake"
         "maintenance:hosts"
+        "maintenance:agent-boundary"
       ];
       before = [ "devenv:enterTest" ];
     };
