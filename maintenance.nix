@@ -48,7 +48,10 @@ in
       '';
     };
     "maintenance-check-agent-boundary" = {
-      packages = [ pkgs.git ];
+      packages = [
+        pkgs.git
+        pkgs.jq
+      ];
       exec = ''
         ${root}
         legacy_agent="$(printf 'phenix-agent-%s' 'harness')"
@@ -63,6 +66,12 @@ in
         grep -F 'inputs.phenix-ai.follows = "phenix-ai";' modules/inputs.nix >/dev/null
         grep -F 'phenix-ai-nvim.follows = "phenix-ai-nvim";' modules/inputs.nix >/dev/null
         grep -F 'inputs.phenix-ai.packages.${system}.phenix' modules/home/matthisk.nix >/dev/null
+        jq -e '
+          ([.nodes | keys[] | select(test("^phenix-(conductor|harness)(_|$)"))] | length) == 0
+          and .nodes.root.inputs["phenix-ai"] != null
+          and .nodes.root.inputs["phenix-ai-nvim"] != null
+          and .nodes.root.inputs["phenix-nvim"] != null
+        ' flake.lock >/dev/null
       '';
     };
     "maintenance-fix-statix" = {
