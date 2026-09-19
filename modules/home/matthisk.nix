@@ -8,7 +8,7 @@
 }:
 let
   system = pkgs.stdenv.hostPlatform.system;
-  harnessPackage = inputs.phenix-harness.packages.${system}.default;
+  phenixPackage = inputs.phenix-ai.packages.${system}.phenix;
   enableRuntimeLuaImport =
     osConfig != null
     && lib.attrByPath [
@@ -64,7 +64,7 @@ in
       packages = [
         phenixCli
         inputs.phenix-nvim.packages.${system}.nvim-nix
-        harnessPackage
+        phenixPackage
       ];
 
       file.".config/hypr/nix-import.lua" = lib.mkIf enableRuntimeLuaImport {
