@@ -18,17 +18,19 @@ jobs:
       - uses: cachix/install-nix-action@a49548c11d9846ad46ecc0115273879b045f001c
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Regenerate flake
+        run: nix run .#write-flake
       - name: Update Phenix AI inputs
         run: nix flake update phenix-ai phenix-nvim
-      - name: Commit generated lock
+      - name: Commit generated flake and lock
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- flake.lock; then
+          if git diff --quiet -- flake.nix flake.lock; then
             exit 0
           fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add flake.lock
+          git add flake.nix flake.lock
           git commit -m "deps: sync Phenix AI stack [skip ci]"
           git push origin HEAD:${{ github.head_ref }}
