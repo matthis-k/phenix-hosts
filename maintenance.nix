@@ -57,6 +57,12 @@ in
         for legacy in "$legacy_agent" "$legacy_opencode" "$legacy_pi"; do
           ! git grep -nF "$legacy" -- . ':(exclude).github/workflows/**'
         done
+
+        ! grep -F 'url = "github:matthis-k/phenix-conductor"' modules/inputs.nix
+        ! grep -F 'url = "github:matthis-k/phenix-harness"' modules/inputs.nix
+        grep -F 'inputs.phenix-ai.follows = "phenix-ai";' modules/inputs.nix >/dev/null
+        grep -F 'phenix-ai-nvim.follows = "phenix-ai-nvim";' modules/inputs.nix >/dev/null
+        grep -F 'inputs.phenix-ai.packages.${system}.phenix' modules/home/matthisk.nix >/dev/null
       '';
     };
     "maintenance-fix-statix" = {
