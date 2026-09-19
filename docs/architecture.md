@@ -16,6 +16,17 @@ The three layers have distinct responsibilities. Flake-file does not define host
 configuration, Den does not replace ordinary NixOS modules, and flake-parts does not
 encode host/user topology.
 
+## Phenix AI dependency boundary
+
+Hosts own one direct `phenix-ai` input. The installed Phenix product comes from
+that input, and `phenix-nvim` is forced to follow the same `phenix-ai` revision.
+The distribution in turn forces `phenix-ai.nvim` to follow that runtime. This
+keeps the ACP executable, provider catalog, Lua binding, canonical Neovim client,
+and host-installed runtime on one tested dependency chain.
+
+Standalone `phenix-conductor` and `phenix-harness` repository inputs are
+retired and must not be reintroduced at the host layer.
+
 ## Inventory and context
 
 `modules/inventory.nix` is the source of truth for stable facts shared across module
