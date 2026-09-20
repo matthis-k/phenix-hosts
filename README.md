@@ -35,10 +35,10 @@ Primary Home Manager modules:
 - `homeModules.devTools`
 - `homeModules.git`
 
-`homeModules.matthisk` installs the Neovim frontend and the configured
-`phenix-harness` product. The Harness supplies Phenix policy, orchestration, routing,
-and skills; `phenix-conductor` supplies the headless runtime. Hosts do not install a
-separate Pi/OpenCode agent runtime.
+`homeModules.matthisk` installs the Neovim distribution and the supported `phenix-ai`
+product. `phenix-ai` owns the runtime, provider integration, policy, routing,
+orchestration, and skills. `phenix-nvim` owns editor composition and consumes the
+canonical `phenix-ai.nvim` client. Hosts do not install a separate retired runtime.
 
 `homeModules.devTools` provides a configurable, language-agnostic terminal and
 development toolkit under `phenix.devTools`. Its defaults cover Unix text and file
