@@ -19,17 +19,9 @@
       };
     };
 
-    phenix-conductor = {
-      url = "github:matthis-k/phenix-conductor";
+    phenix-ai = {
+      url = "github:matthis-k/phenix-ai";
       inputs.phenix-pins.follows = "phenix-pins";
-    };
-
-    phenix-harness = {
-      url = "github:matthis-k/phenix-harness";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        phenix-conductor.follows = "phenix-conductor";
-      };
     };
 
     phenix-nvim = {
@@ -37,8 +29,7 @@
       inputs = {
         phenix-pins.follows = "phenix-pins";
         flake-parts.follows = "flake-parts";
-        phenix-conductor.follows = "phenix-conductor";
-        phenix-harness.follows = "phenix-harness";
+        phenix-ai.follows = "phenix-ai";
       };
     };
 
